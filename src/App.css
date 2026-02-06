@@ -1,0 +1,27 @@
+main {
+    align-items: center;
+    gap: 1rem
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    width: 100%;
+    gap: 1rem;
+    background: var(--c-dark-text);
+    padding: 1rem;
+    border-radius: 1rem;
+    border: solid 2px var(--c-blue);
+}
+
+section h2 {
+    font-size: 14pt;
+    font-weight: normal;
+}
+
+section h2::before {
+    margin-right: 0.75rem;
+    content: '&';
+    color: var(--c-blue);
+}
