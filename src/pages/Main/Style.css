@@ -2,7 +2,7 @@ main {
     align-items: center;
     gap: 1em;
     padding-bottom: 40dvh;
-    padding: 1em;
+    padding: 1em 1em 40dvh 1em;
 }
 
 section {

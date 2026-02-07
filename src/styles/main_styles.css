@@ -115,6 +115,10 @@ textarea {
   background: var(--c-back-main);
 }
 
+*[id] {
+  scroll-margin-top: 64px;
+}
+
 .unselectable {
   -webkit-touch-callout: none;
   /* iOS Safari */
