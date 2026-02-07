@@ -1,12 +1,9 @@
-import { useState } from 'react';
 import AZLink from './AZLink';
-import AZSpan from './AZSpan';
 import { AZButton, AZButtonCopy } from './AZButton';
 import '../../styles/header.css';
 
 
 function AZHeader() {
-    const [CurrentPage, setCurrentPage] = useState(window.location.pathname);
     const pathname = 'https://github.com/azsspc/azsspc.github.io/blob/main' + window.location.pathname;
 
     return (
@@ -14,7 +11,7 @@ function AZHeader() {
             <header className='az-header'>
                 <AZLink color='red' href='/' pure={true}>main</AZLink>
                 <AZLink color='green' href='/pages/' pure={true}>pages</AZLink>
-                <AZButtonCopy color='gray' copy={window.location.href} pure={true}>AZsSPC{CurrentPage}</AZButtonCopy>
+                <AZButtonCopy color='gray' copy={window.location.href} pure={true}>AZsSPC{window.location.pathname}</AZButtonCopy>
                 <AZLink color='blue' href={pathname} pure={true}>code</AZLink>
                 <AZButton color='gold'>info</AZButton>
             </header>
