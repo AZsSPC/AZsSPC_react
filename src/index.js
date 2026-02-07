@@ -1,27 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import 'styles/main_styles.css';
-import 'styles/buttons_and_links.css';
 import { useEffect, useState } from 'react'
+import { NotificationProvider } from 'components/providers/NotificationProvider'
 import AZHeader from 'components/elements/AZHeader'
 import Page404 from 'pages/_404/Page.js'
-import { NotificationProvider } from 'components/providers/NotificationProvider'
-
-const pages = {
-  '/': () => import('./pages/Main/Page.js'),
-}
+import './Styles.css';
+import 'styles/buttons_and_links.css';
+import {ALL_PAGES} from './Pages.js';
 
 const App = () => {
   const [Page, setPage] = useState(null)
 
   useEffect(() => {
-    const path = window.location.pathname
-    const loader = pages[path]
+    const page = ALL_PAGES[window.location.pathname]
 
-    if (!loader) return
+    if (!page) return
 
-    loader().then(mod => {
+    import(`./pages/${page.path}/Page.js`).then(mod => {
       setPage(() => mod.default)
+
+    document.title = `AZsSPC - ${page.title || page.path}`;
     })
   }, [])
 

@@ -1,0 +1,74 @@
+#projects {
+    display: flex;
+    gap: 1rem;
+    flex-flow: column;
+    align-items: stretch;
+    align-content: end;
+    max-width: 800px;
+    width: 100%;
+}
+
+.project-link-panel {
+    display: flex;
+    flex-direction: column;
+    flex-direction: column;
+    max-width: 800px;
+    width: 100%;
+    background: var(--c-main-b);
+    border: solid 2px var(--c-main-l);
+    border-radius: 5px;
+    box-shadow: var(--shadow);
+    color: var(--c-white-text);
+    text-decoration: none;
+    background-color: var(--c-main-d);
+}
+
+.project-link-panel:hover {
+    border-color: var(--c-main-w);
+    background-color: var(--c-main-l);
+}
+
+.project-link-panel .project-path {
+    grid-area: path;
+    font-size: 0.75em;
+    padding: 0.25rem 0.5rem;
+    color: var(--c-main-l);
+}
+
+.project-link-panel:hover .project-path {
+    text-decoration: underline;
+    color: var(--c-main-w);
+}
+
+.project-link-panel .project-title {
+    grid-area: title;
+    padding: 0.25rem 0.5rem;
+    font-size: 1.25em;
+    background-color: var(--c-main-l);
+}
+
+.project-link-panel:hover .project-title {
+    background-color: var(--c-main-w);
+}
+
+.project-link-panel .project-description {
+    grid-area: description;
+    padding: 0.25rem 0.5rem 0 0.5rem;
+    color: var(--c-main-w);
+    border-bottom: solid 2px var(--c-main-l);
+}
+
+.project-link-panel:hover .project-description {
+    border-color: var(--c-main-w);
+}
+
+.project-link-panel .project-tags {
+    grid-area: tags;
+    font-size: 0.75em;
+    padding: 0.25rem 0.5rem;
+    color: var(--c-main-l);
+}
+
+.project-link-panel:hover .project-tags {
+    color: var(--c-main-w);
+}

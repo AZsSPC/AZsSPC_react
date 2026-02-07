@@ -1,121 +1,127 @@
-import './Style.css';
+import './Styles.css';
 import { AZButton, AZButtonCopy } from '../../components/elements/AZButton';
 import AZLink from '../../components/elements/AZLink';
 import AZSpan from '../../components/elements/AZSpan';
+import { PAGES } from '../../Pages.js';
 
 function Page() {
     const pathname = 'https://github.com/azsspc/azsspc.github.io/blob/main' + window.location.pathname;
 
     return <>
-        <main>
-            <section>
-                <h2>Welcome to AZsSPC's site!</h2>
-                <p>
-                    This is my personal site, where I will post some of my{' '}
-                    <AZLink color="magenta" href="/projects/">projects</AZLink>{' '}
-                    related to <AZSpan color="blue">programming</AZSpan>,{' '}
-                    <AZSpan color="purple">gaming</AZSpan>{' '}
-                    and other stuff I'd like to share
-                </p>
-                <p>
-                    If you have any questions or suggestions, please feel free to contact me through{' '}
-                    <AZLink color="gold" href="/contacts/">contacts page</AZLink>
-                </p>
-                <p>
-                    I hope you will find something interesting here!{' '}
-                    <AZSpan color="gold">Enjoy your stay!</AZSpan>
-                </p>
-            </section>
+        <section>
+            <h2>Welcome to AZsSPC's site!</h2>
+            <p>
+                This is my personal site, where I will post some of my{' '}
+                <AZLink color="magenta" href="/projects/">projects</AZLink>{' '}
+                related to <AZSpan color="blue">programming</AZSpan>,{' '}
+                <AZSpan color="purple">gaming</AZSpan>{' '}
+                and other stuff I'd like to share
+            </p>
+            <p>
+                If you have any questions or suggestions, please feel free to contact me through{' '}
+                <AZLink color="gold" href="/contacts/">contacts page</AZLink>
+            </p>
+            <p>
+                I hope you will find something interesting here!{' '}
+                <AZSpan color="gold">Enjoy your stay!</AZSpan>
+            </p>
+        </section>
 
-            <section>
-                <h2>Important information</h2>
-                <p>
-                    The purpose of this page is to tell you some{' '}
-                    <AZSpan color="gold">meanings and useful information</AZSpan>{' '}
-                    for using the site, so plase, make sure you read this page carefully
-                </p>
-                <p>
-                    Also I must say that the site is <AZSpan color="blue">still in development</AZSpan>,
-                    so some of the features{' '}
-                    <AZSpan color="magenta">may not work properly</AZSpan>,
-                    but I will try to fix it as soon as possible
-                </p>
-            </section>
+        <section>
+            <h2>Important information</h2>
+            <p>
+                The purpose of this page is to tell you some{' '}
+                <AZSpan color="gold">meanings and useful information</AZSpan>{' '}
+                for using the site, so plase, make sure you read this page carefully
+            </p>
+            <p>
+                Also I must say that the site is <AZSpan color="blue">still in development</AZSpan>,
+                so some of the features{' '}
+                <AZSpan color="magenta">may not work properly</AZSpan>,
+                but I will try to fix it as soon as possible
+            </p>
+        </section>
 
-            <section>
-                <h2>Elements explanation</h2>
-                <p>
-                    Basic elements look like this:{' '}
-                    <AZLink color="purple" href='#' >anchor</AZLink>{' '} to specific element on the current page,{' '}
-                    <AZLink color="red" href='/'>internal link</AZLink>,{' '}
-                    <AZLink color="blue" href='http://google.com/' >external link</AZLink>,{' '}
-                    <AZButton color="green">button</AZButton>{' '}
-                    and{' '}
-                    <AZButtonCopy color='gray'>copy button</AZButtonCopy>
+        <section>
+            <h2>Elements explanation</h2>
+            <p>
+                Basic elements look like this:{' '}
+                <AZLink color="purple" href='#' >anchor</AZLink>{' '} to specific element on the current page,{' '}
+                <AZLink color="red" href='/'>internal link</AZLink>,{' '}
+                <AZLink color="blue" href='http://google.com/' >external link</AZLink>,{' '}
+                <AZButton color="green">button</AZButton>{' '}
+                and{' '}
+                <AZButtonCopy color='gray'>copy button</AZButtonCopy>
 
-                </p>
-                <p>
-                    They can be colored differently to satisfy various design needs,
-                    look at the helping icons before or after element content to specify it's purpose
-                </p>
-            </section>
+            </p>
+            <p>
+                They can be colored differently to satisfy various design needs,
+                look at the helping icons before or after element content to specify it's purpose
+            </p>
+        </section>
 
-            <section>
-                <h2>Header content explanation</h2>
-                <p>
-                    <AZLink color='red' href='/' pure={true}>main</AZLink>{' '}
-                    is the link to the{' '}
-                    <AZLink color='red' href='/'>main page</AZLink>{' '}
-                    of the site
-                </p>
-                <p>
-                    <AZLink color='green' href='#pages' pure={true}>pages</AZLink>{' '}
-                    is the link to the {' '}
-                    <AZLink color='green' href='#pages'>list of all pages</AZLink>{' '}
-                    of the site
-                </p>
-                {/* <p>
+        <section>
+            <h2>Header content explanation</h2>
+            <p>
+                <AZLink color='red' href='/' pure={true}>main</AZLink>{' '}
+                is the link to the{' '}
+                <AZLink color='red' href='/'>main page</AZLink>{' '}
+                of the site
+            </p>
+            <p>
+                <AZLink color='green' href='#pages' pure={true}>pages</AZLink>{' '}
+                is the link to the {' '}
+                <AZLink color='green' href='#pages'>list of all pages</AZLink>{' '}
+                of the site
+            </p>
+            {/* <p>
             <AZLink color='green' href={`${pathname}README.md`} pure={true}>.md</AZLink>{' '}
             is the link to the{' '}
             <AZLink color='green' href={`${pathname}README.md`}>README.md</AZLink>{' '}
             file of current page
           </p> */}
-                <p>
-                    <AZLink color='blue' href={pathname} pure={true}>code</AZLink>{' '}
-                    is the link to the{' '}
-                    <AZLink color='blue' href={pathname} >source code</AZLink>{' '}
-                    of current page on{' '}
-                    <AZLink color="gray" href="https://github.com/AZsSPC" >GitHub</AZLink>{' '}
-                </p>
-                <p>
-                    <AZButton color='gold'>info</AZButton>{' '}
-                    is the button to show the {' '}
-                    <AZSpan color='gold'>information</AZSpan>{' '}
-                    about the current page
-                </p>
-                <p>
-                    Clicking on{' '}
-                    <AZButtonCopy color='gray'>AZsSPC/current/page/path/</AZButtonCopy>{' '}
-                    will copy it to the clipboard
-                </p>
-            </section>
+            <p>
+                <AZLink color='blue' href={pathname} pure={true}>code</AZLink>{' '}
+                is the link to the{' '}
+                <AZLink color='blue' href={pathname} >source code</AZLink>{' '}
+                of current page on{' '}
+                <AZLink color="gray" href="https://github.com/AZsSPC" >GitHub</AZLink>{' '}
+            </p>
+            <p>
+                <AZButton color='gold'>info</AZButton>{' '}
+                is the button to show the {' '}
+                <AZSpan color='gold'>information</AZSpan>{' '}
+                about the current page
+            </p>
+            <p>
+                Clicking on{' '}
+                <AZButtonCopy color='gray'>AZsSPC/current/page/path/</AZButtonCopy>{' '}
+                will copy it to the clipboard
+            </p>
+        </section>
 
-            <section id='pages'>
-                <h2>Pages list</h2>
-                <p>
-                    <AZLink color='green' href='/'>Main page</AZLink>asd asd
+        <section id='pages'>
+            <h2>Pages list</h2>
+            {Object.values(PAGES).map(page => (
+                <p key={page.path}>
+                    <AZLink color={page.color} href={`/${page.path}/`}>AZsSPC/{page.path}</AZLink>
                 </p>
-                <p>
-                    <AZLink color='green' href='/contacts/'>Contacts</AZLink>
-                </p>
-                <p>
-                    <AZLink color='green' href='/projects/'>Projects</AZLink>
-                </p>
-                <p>
-                    <AZLink color='green' href='/about/'>About me</AZLink>
-                </p>
-            </section>
-        </main>
+            ))}
+            {/* <p>
+                <AZLink color='red' href='/'>main page</AZLink>{' '}
+                contains some information about the site and how to use it
+            </p>
+             <p>
+                <AZLink color='green' href='/contacts/'>contacts</AZLink>
+            </p>
+            <p>
+                <AZLink color='green' href='/about/'>about me</AZLink>
+            </p> 
+            <p>
+                <AZLink color='magenta' href='/projects/'>projects</AZLink>{' '}
+                contains mini applications and other projects that I want to share
+            </p> */}
+        </section>
     </>;
 }
 

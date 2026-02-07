@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'JB mono';
-  src: url(../fonts/JB_Mono.woff2);
+  src: url(./fonts/JB_Mono.woff2);
 }
 
 :root {
@@ -37,6 +37,7 @@
 
   --c-main: rgb(30, 25, 48);
   --c-main-l: rgb(62, 54, 99);
+  --c-main-w: rgb(155, 146, 196);
   --c-main-d: rgb(23, 18, 48);
   --c-main-b: rgb(16, 13, 29);
   --c-main-f: rgb(79, 74, 102);
@@ -109,6 +110,7 @@ main {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  padding: 1em;
 }
 
 textarea {
