@@ -1,4 +1,4 @@
-import AZLink from 'components/elements/AZLink';
+import AZLink from '../../components/elements/AZLink';
 
 function Page404() {
 

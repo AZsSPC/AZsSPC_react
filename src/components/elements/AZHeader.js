@@ -1,7 +1,7 @@
-import AZLink from 'components/elements/AZLink';
-import { AZButton, AZButtonCopy } from 'components/elements/AZButton';
-import 'styles/header.css';
-import { useNotify } from "components/providers/NotificationProvider";
+import AZLink from './AZLink';
+import { AZButton, AZButtonCopy } from './AZButton';
+import '../../styles/header.css';
+import { useNotify } from "../providers/NotificationProvider";
 
 
 function AZHeader() {
@@ -16,7 +16,7 @@ function AZHeader() {
                 <AZButtonCopy color='gray' copy={window.location.href} pure={true}>AZsSPC{window.location.pathname}</AZButtonCopy>
                 <AZLink color='blue' href={pathname} pure={true}>code</AZLink>
                 <AZButton color='gold' onClick={(e) => {
-                    notify('Unavailable yet', { type: 'warning' });
+                    notify('Unavailable yet', { type: 'info' });
                 }}>info</AZButton>
             </header>
         </div>

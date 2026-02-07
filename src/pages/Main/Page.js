@@ -1,7 +1,7 @@
 import './Style.css';
-import { AZButton, AZButtonCopy } from 'components/elements/AZButton';
-import AZLink from 'components/elements/AZLink';
-import AZSpan from 'components/elements/AZSpan';
+import { AZButton, AZButtonCopy } from '../../components/elements/AZButton';
+import AZLink from '../../components/elements/AZLink';
+import AZSpan from '../../components/elements/AZSpan';
 
 function Page() {
     const pathname = 'https://github.com/azsspc/azsspc.github.io/blob/main' + window.location.pathname;

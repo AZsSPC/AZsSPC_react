@@ -1,4 +1,4 @@
-import { useNotify } from "components/providers/NotificationProvider";
+import { useNotify } from "../providers/NotificationProvider";
 
 function AZButton({ children, color, pure = false, ...props }) {
     return <button class={`az-button ${color ? `color-${color}` : ''}  ${pure ? 'pure' : ''}`} {...props}>{children}</button>;
