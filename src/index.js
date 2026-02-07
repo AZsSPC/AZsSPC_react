@@ -6,7 +6,7 @@ import AZHeader from 'components/elements/AZHeader'
 import Page404 from 'pages/_404/Page.js'
 import './Styles.css';
 import 'styles/buttons_and_links.css';
-import {ALL_PAGES} from './Pages.js';
+import { ALL_PAGES } from './Pages.js';
 
 const App = () => {
   const [Page, setPage] = useState(null)
@@ -19,7 +19,7 @@ const App = () => {
     import(`./pages/${page.path}/Page.js`).then(mod => {
       setPage(() => mod.default)
 
-    document.title = `AZsSPC - ${page.title || page.path}`;
+      document.title = `AZsSPC - ${page.title || page.path}`;
     })
   }, [])
 

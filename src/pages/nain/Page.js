@@ -74,12 +74,6 @@ function Page() {
                 <AZLink color='green' href='#pages'>list of all pages</AZLink>{' '}
                 of the site
             </p>
-            {/* <p>
-            <AZLink color='green' href={`${pathname}README.md`} pure={true}>.md</AZLink>{' '}
-            is the link to the{' '}
-            <AZLink color='green' href={`${pathname}README.md`}>README.md</AZLink>{' '}
-            file of current page
-          </p> */}
             <p>
                 <AZLink color='blue' href={pathname} pure={true}>code</AZLink>{' '}
                 is the link to the{' '}
@@ -107,20 +101,6 @@ function Page() {
                     <AZLink color={page.color} href={`/${page.path}/`}>AZsSPC/{page.path}</AZLink>
                 </p>
             ))}
-            {/* <p>
-                <AZLink color='red' href='/'>main page</AZLink>{' '}
-                contains some information about the site and how to use it
-            </p>
-             <p>
-                <AZLink color='green' href='/contacts/'>contacts</AZLink>
-            </p>
-            <p>
-                <AZLink color='green' href='/about/'>about me</AZLink>
-            </p> 
-            <p>
-                <AZLink color='magenta' href='/projects/'>projects</AZLink>{' '}
-                contains mini applications and other projects that I want to share
-            </p> */}
         </section>
     </>;
 }
