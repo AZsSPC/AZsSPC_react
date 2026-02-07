@@ -1,0 +1,47 @@
+.az-notifications {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 100;
+    width: clamp(200px, 400px, 100% - 1em);
+    align-items: flex-end;
+}
+
+.az-notification {
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    background: var(--c-gray-d);
+    padding: 0.75em;
+    border-radius: 1em;
+    border: solid 2px var(--c-gray-l);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: white;
+    width: auto;
+}
+
+
+.az-notification.az-notification-success {
+    border-color: var(--c-green-l);
+    background: var(--c-green-d);
+}
+
+.az-notification.az-notification-error {
+    border-color: var(--c-red-l);
+    background: var(--c-red-d);
+}
+
+.az-notification.az-notification-warning {
+    border-color: var(--c-gold-l);
+    background: var(--c-gold-d);
+}
+
+.az-notification.az-notification-info {
+    border-color: var(--c-blue-l);
+    background: var(--c-blue-d);
+}

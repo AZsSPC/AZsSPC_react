@@ -1,0 +1,169 @@
+@font-face {
+  font-family: 'JB mono';
+  src: url(../fonts/JB_Mono.woff2);
+}
+
+:root {
+  /* #region colors */
+  --c-red-d: #9A0D0D;
+  --c-red: #D73838;
+  --c-red-l: #FF0F0F;
+  --c-red-f: #DEA7A7;
+  --c-green-d: #186134;
+  --c-green: #459B51;
+  --c-green-l: #38AF61;
+  --c-green-f: #94C4A4;
+  --c-blue-d: #0162AC;
+  --c-blue: #459CC9;
+  --c-blue-l: #0EBDFF;
+  --c-blue-f: #9AB3CD;
+  --c-gold-d: #A96602;
+  --c-gold: #CF8B14;
+  --c-gold-l: #FFC70E;
+  --c-gold-f: #CDBF9A;
+  --c-purple-d: #570085;
+  --c-purple: #6F3B8B;
+  --c-purple-l: #CB76FF;
+  --c-purple-f: #EAC3FF;
+  --c-magenta-d: #713070;
+  --c-magenta: #BA53B8;
+  --c-magenta-l: #E753E5;
+  --c-magenta-f: #C9A9C8;
+  --c-gray-d: #3A3A3A;
+  --c-gray: #626262;
+  --c-gray-l: #858585;
+  --c-gray-f: #B7B7B7;
+  /* #endregion */
+
+  --c-main: rgb(30, 25, 48);
+  --c-main-l: rgb(62, 54, 99);
+  --c-main-d: rgb(23, 18, 48);
+  --c-main-b: rgb(16, 13, 29);
+  --c-main-f: rgb(79, 74, 102);
+
+
+  --c-back-main: var(--c-main);
+  --c-header: var(--c-main);
+  --c-back-head: #232323;
+  --c-back-head-split: #474747;
+  --c-gray-help: #3B3B3B;
+  --c-back-light: #6D6D6D;
+
+  --c-white-text: #f9f3ff;
+  --c-dark-text: #1d1a2c;
+
+  --c-thumb: #626262;
+  --c-null: #00000000;
+  --c-split: #5A5A5A;
+  --c-comment: #6A6A6A;
+
+  --shadow: 0 0.35em 0.75em rgba(23, 18, 48, 0.3);
+  --shadow-inset: inset var(--shadow);
+  --border-radius: 10px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--c-thumb);
+  border: 4px solid var(--c-header);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+body {
+  background-size: 5em 5em;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--c-main-b);
+
+}
+
+body,
+input,
+button,
+select,
+textarea {
+  font-family: 'JB mono', monospace;
+  font-size: 16px;
+  color: var(--c-white-text);
+}
+
+*:focus {
+  outline: solid 1px var(--c-white-text);
+}
+
+main {
+  margin: 0;
+  white-space: normal;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+textarea {
+  background: var(--c-back-main);
+}
+
+.unselectable {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently not supported by any browser */
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+@media screen and (max-width : 800px) {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    border-width: 2px;
+  }
+
+  body,
+  input,
+  button,
+  select,
+  textarea {
+    font-size: 12px;
+  }
+
+}
+
+@media screen and (min-width : 800px) {
+  ::-webkit-scrollbar {
+    width: 18px;
+    height: 18px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 9px;
+    border-width: 4px;
+  }
+
+}

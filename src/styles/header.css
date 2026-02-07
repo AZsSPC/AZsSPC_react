@@ -1,0 +1,28 @@
+.az-header-container {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+header {
+    padding: .5em 4em;
+    min-height: 48px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: .5em;
+    align-items: center;
+    justify-content: center;
+    background: var(--c-header);
+    box-shadow: var(--shadow);
+    border-bottom: solid 2px var(--c-main-l);
+}
+
+header>div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: .5em;
+    align-items: center;
+    justify-content: center;
+}

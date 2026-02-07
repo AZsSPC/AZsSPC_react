@@ -1,6 +1,8 @@
 main {
     align-items: center;
-    gap: 1rem
+    gap: 1em;
+    padding-bottom: 40dvh;
+    padding: 1em;
 }
 
 section {
@@ -8,20 +10,22 @@ section {
     flex-direction: column;
     max-width: 800px;
     width: 100%;
-    gap: 1rem;
-    background: var(--c-dark-text);
-    padding: 1rem;
-    border-radius: 1rem;
-    border: solid 2px var(--c-blue);
+    gap: 1em;
+    background: var(--c-main);
+    padding: 1em;
+    border-radius: 1em;
+    border: solid 2px var(--c-main-l);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 section h2 {
-    font-size: 14pt;
+    font-size: 18px;
     font-weight: normal;
 }
 
 section h2::before {
-    margin-right: 0.75rem;
+    margin-right: 0.5em;
     content: '&';
-    color: var(--c-blue);
+    font-weight: bold;
+    color: var(--c-main-l);
 }

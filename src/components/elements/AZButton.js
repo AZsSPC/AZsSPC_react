@@ -1,15 +1,15 @@
 import { useNotify } from "../providers/NotificationProvider";
 
-function AZButton({ children, color, ...props }) {
-    return <button class={`az-button ${color ? `color-${color}` : ''}`} {...props}>{children}</button>;
+function AZButton({ children, color, pure = false, ...props }) {
+    return <button class={`az-button ${color ? `color-${color}` : ''}  ${pure ? 'pure' : ''}`} {...props}>{children}</button>;
 }
 
-function AZButtonCopy({ children, copy, color, ...props }) {
+function AZButtonCopy({ children, copy, color, pure = false, ...props }) {
     const notify = useNotify();
-    return <button class={`az-button az-button-copy ${color ? `color-${color}` : ''}`} {...props}
+    return <button class={`az-button az-button-copy ${color ? `color-${color}` : ''}  ${pure ? 'pure' : ''}`} {...props}
         onClick={(e) => {
             navigator.clipboard.writeText(copy || e.target.textContent);
-            notify('Saved successfully', { type: 'success' });
+            notify('Copied to clipboard', { type: 'success' });
         }}
     >{children}</button>;
 }

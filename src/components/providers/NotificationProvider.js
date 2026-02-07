@@ -1,6 +1,9 @@
 import { createContext, useContext, useState, useCallback } from 'react';
+import '../../styles/notifications.css';
 
 const NotificationContext = createContext(null);
+
+const notfication_timeout = 3000;
 
 export function NotificationProvider({ children }) {
     const [items, setItems] = useState([]);
@@ -12,7 +15,7 @@ export function NotificationProvider({ children }) {
 
         setTimeout(() => {
             setItems(list => list.filter(n => n.id !== id));
-        }, options.duration ?? 3000);
+        }, options.duration ?? notfication_timeout);
     }, []);
 
     return (
@@ -33,7 +36,7 @@ function NotificationHost({ items }) {
     return (
         <div className='az-notifications'>
             {items.map(n => (
-                <div key={n.id} className={`az-notification ${n.type ?? ''}`}>
+                <div key={n.id} className={`az-notification ${`az-notification-${n.type}` ?? ''}`}>
                     {n.message}
                 </div>
             ))}
