@@ -13,11 +13,11 @@ function AZHeader() {
             <header className='az-header'>
                 <AZLink color='red' href='/' pure={true}>main</AZLink>
                 <AZLink color='green' href={window.location.pathname === '/' ? '#pages' : '/#pages'} pure={true}>pages</AZLink>
-                <AZButtonCopy color='gray' copy={window.location.href} pure={true}>AZsSPC{window.location.pathname}</AZButtonCopy>
                 <AZLink color='blue' href={pathname} pure={true}>code</AZLink>
                 <AZButton color='gold' onClick={(e) => {
                     notify('Unavailable yet', { type: 'info' });
                 }}>info</AZButton>
+                <AZButtonCopy color='gray' copy={window.location.href} pure={true}>AZsSPC{window.location.pathname}</AZButtonCopy>
             </header>
         </div>
     );

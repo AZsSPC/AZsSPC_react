@@ -1,5 +1,5 @@
 function AZSpan({ children, classes = '', color, ...props }) {
-    return <span class={`az-span ${classes} ${color ? `color-${color}` : ''}`} {...props}>{children}</span>;
+    return <span className={`az-span ${classes} ${color ? `color-${color}` : ''}`} {...props}>{children}</span>;
 }
 
 

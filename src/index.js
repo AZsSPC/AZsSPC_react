@@ -19,7 +19,7 @@ const App = () => {
     import(`./pages/${page.path}/Page.js`).then(mod => {
       setPage(() => mod.default)
 
-      document.title = `AZsSPC - ${page.title || page.path}`;
+      document.title = `AZsSPC - ${page.title || window.location.pathname}`;
     })
   }, [])
 

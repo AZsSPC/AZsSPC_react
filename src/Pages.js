@@ -1,3 +1,7 @@
+/*
+  IMPORTANT: each page key must start and end with a slash, for example: '/projects/' or '/projects/layout_translator/'
+*/
+
 const PAGES = {
     '/': {
         path: 'main',
@@ -12,13 +16,14 @@ const PAGES = {
 }
 
 const PROJECTS = {
-    '/projects/test': {
-        path: 'projects/test',
-        title: 'Test projsdsdect',
-        description: 'This is a test project used to demonstrate the project page layout. It has no actual content.',
+    '/projects/layout_translator/': {
+        path: 'projects/layout_translator',
+        title: 'Layout Translator',
+        description: 'Insert mistyped russian or ukrainian text and receive the right version',
         tags: ['test', 'demo'],
         marks: ['wip']
     },
+
 }
 
 const ALL_PAGES = {

@@ -96,9 +96,11 @@ function Page() {
 
         <section id='pages'>
             <h2>Pages list</h2>
-            {Object.values(PAGES).map(page => (
-                <p key={page.path}>
-                    <AZLink color={page.color} href={`/${page.path}/`}>AZsSPC/{page.path}</AZLink>
+            {Object.keys(PAGES).map(page => (
+                <p key={page}>
+                    {PAGES[page].title}{' '}
+                    <AZLink color={PAGES[page].color} href={page}>AZsSPC{page}</AZLink><br />
+                    {PAGES[page].description}
                 </p>
             ))}
         </section>
