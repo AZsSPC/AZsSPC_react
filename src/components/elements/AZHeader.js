@@ -2,10 +2,11 @@ import AZLink from './AZLink';
 import { AZButton, AZButtonCopy } from './AZButton';
 import '../../styles/header.css';
 import { useNotify } from "../providers/NotificationProvider";
+import { ALL_PAGES } from '../../Pages.js';
 
 
 function AZHeader() {
-    const pathname = 'https://github.com/AZsSPC/AZsSPC_react/blob/main' + window.location.pathname;
+    const pathname = 'https://github.com/AZsSPC/AZsSPC_react/blob/main/src/pages/' + ALL_PAGES[window.location.pathname]?.path + '/';
     const notify = useNotify();
 
     return (
