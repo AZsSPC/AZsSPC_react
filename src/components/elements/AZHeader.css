@@ -11,7 +11,7 @@
 }
 
 header {
-    padding: .5em 4em;
+    padding: .75em 4em;
     min-height: 48px;
     display: flex;
     flex-direction: row;

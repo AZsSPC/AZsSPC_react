@@ -20,8 +20,13 @@ const PROJECTS = {
         path: 'projects/layout_translator',
         title: 'Layout Translator',
         description: 'Insert mistyped russian or ukrainian text and receive the right version',
-        tags: ['test', 'demo'],
-        marks: ['wip']
+        tags: ['web', 'for all', 'translator', 'utility']
+    },
+    '/projects/evo/': {
+        path: 'projects/evo',
+        title: 'Evo',
+        description: 'An evolutionary simulation of cells',
+        tags: ['web', 'for all', 'simulation', 'evolution']
     },
 
 }

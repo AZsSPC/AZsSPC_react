@@ -1,8 +1,8 @@
 import AZLink from './AZLink';
 import { AZButton, AZButtonCopy } from './AZButton';
-import '../../styles/header.css';
 import { useNotify } from "../providers/NotificationProvider";
 import { ALL_PAGES } from '../../Pages.js';
+import './AZHeader.css';
 
 
 function AZHeader() {
@@ -23,7 +23,5 @@ function AZHeader() {
         </div>
     );
 }
-/* <AZLink color='magenta' href={`${pathname}README.md`} pure={true}>.md</AZLink> */
-
 
 export default AZHeader;
