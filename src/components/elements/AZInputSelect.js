@@ -80,45 +80,45 @@ const AZInputSelect = forwardRef(function AZInputSelect(props, ref) {
     return () => document.removeEventListener('mousedown', handleOutside);
   }, []);
 
-  return (
-    <div
-      ref={setRef}
-      className={`az-select-button ${color ? `color-${color}` : ''}`}
-      style={style}
-      tabIndex={0}
-      role="combobox"
-      aria-expanded={open}
-      aria-haspopup="listbox"
-      onClick={() => setOpen(o => !o)}
-      onKeyDown={handleKeyDown}
-    >
-      {label && <span>{label} </span>}
+  return (<div
+    ref={setRef}
+    className={`az-select-button ${color ? `color-${color}` : ''}`}
+    style={style}
+    tabIndex={0}
+    role="combobox"
+    aria-expanded={open}
+    aria-controls='az-select-listbox'
+    aria-haspopup="listbox"
+    onClick={() => setOpen(o => !o)}
+    onKeyDown={handleKeyDown}
+  >
+    {label && <span>{label} </span>}
 
-      <span className='az-select-button-selected' style={{ width: `${max_length+1}ch` }}>
-        {selectedOption ? selectedOption.label : '—'}
-      </span>
+    <span className='az-select-button-selected' style={{ width: `${max_length + 1}ch` }}>
+      {selectedOption ? selectedOption.label : '—'}
+    </span>
 
-      {open && (
-        <ul
-          ref={listRef}
-          role="listbox"
-          className="az-select-dropdown"
-        >
-          {normalized.map((option, index) => (
-            <li
-              key={option.value}
-              role="option"
-              aria-selected={option.value === String(currentValue)}
-              className={index === highlightIndex ? 'highlight' : ''}
-              onMouseEnter={() => setHighlightIndex(index)}
-              onClick={() => selectOption(option)}
-            >
-              {option.label}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    {open && (
+      <ul
+        ref={listRef}
+        role="listbox"
+        className="az-select-dropdown"
+      >
+        {normalized.map((option, index) => (
+          <li
+            key={option.value}
+            role="option"
+            aria-selected={option.value === String(currentValue)}
+            className={index === highlightIndex ? 'highlight' : ''}
+            onMouseEnter={() => setHighlightIndex(index)}
+            onClick={() => selectOption(option)}
+          >
+            {option.label}
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
   );
 });
 
