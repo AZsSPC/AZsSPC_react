@@ -20,14 +20,6 @@
     border: 2px solid var(--c-magenta);
 }
 
-select {
-    background: var(--c-back-head);
-    border: 0.2rem solid var(--c-back-head);
-    border-radius: 1em;
-    padding: 0 0.3em;
-    cursor: pointer;
-}
-
 .translator-page {
     display: flex;
     flex-direction: column;

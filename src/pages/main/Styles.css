@@ -1,8 +1,8 @@
 main {
     align-items: center;
-    gap: 1em;
+    gap: 1ch;
     padding-bottom: 40dvh;
-    padding: 1em 1em 40dvh 1em;
+    padding: 1ch 1ch 40dvh 1ch;
 }
 
 section {
@@ -10,10 +10,10 @@ section {
     flex-direction: column;
     max-width: 800px;
     width: 100%;
-    gap: 1em;
+    gap: 1ch;
     background: var(--c-main);
-    padding: 1em;
-    border-radius: 1em;
+    padding: 1ch;
+    border-radius: 1ch;
     border: solid 2px var(--c-main-l);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -24,7 +24,7 @@ section h2 {
 }
 
 section h2::before {
-    margin-right: 0.5em;
+    margin-right: 0.5ch;
     content: '&';
     font-weight: bold;
     color: var(--c-main-l);

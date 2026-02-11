@@ -1,57 +1,123 @@
-button.az-button,
-a.az-link-button,
-label.az-input-button {
-    overflow: hidden;
+.az-button,
+.az-link-button,
+.az-input-button,
+.az-select-button {
     --az-button-background: var(--c-green);
     --az-button-hover: var(--c-green-d);
     --az-button-foreground: var(--c-white-text);
     background: var(--az-button-background);
     color: var(--az-button-foreground);
-    border-radius: 0.25em;
+    border-radius: 0.5ch;
     border: none;
-    padding: 0 0.3em;
+    padding: 0 0.5ch;
     margin: 0;
     cursor: pointer;
     text-decoration: none;
     display: inline-flex;
     flex-direction: row;
-    gap: 0.5em;
+    gap: 1ch;
     justify-content: space-between;
     transition: 200ms;
     word-break: break-word;
     position: relative;
     align-items: center;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
 }
 
-/* #region a.az-link-button specifics */
+/* #region .az-select-button specifics */
 
-a.az-link-button:not(.pure)::after {
-    display: inline-block;
-    content: "↘";
+.az-select-button {
+    gap: 0.5ch;
+}
+
+.az-select-button::after {
+    content: "=";
+}
+
+.az-select-button .az-select-button-selected {
+    padding: 0 0.5ch;
+    background-color: var(--az-button-hover);
+    color: var(--az-button-foreground);
+    max-width: 10em;
+}
+
+.az-select-button .az-select-dropdown {
+    color: var(--az-button-foreground);
+    position: absolute;
+    left: 0;
     right: 0;
+    bottom: 1.75em;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    max-height: 10em;
+    gap: 2px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 2px solid var(--az-button-background);
+    background-color: var(--az-button-background);
+    box-shadow: var(--shadow);
 }
 
-a.az-link-button[target="_blank"]:not(.pure)::after {
+
+.az-select-button .az-select-dropdown li {
+    padding: 0.25ch 0.5ch;
+    background-color: var(--az-button-hover);
+}
+
+.az-select-button .az-select-dropdown li:hover {
+    background-color: var(--az-button-foreground);
+    color: var(--az-button-hover);
+}
+
+.az-select-button .az-select-dropdown::-webkit-scrollbar {
+    width: 0.5ch;
+    height: 0.5ch;
+}
+
+.az-select-button .az-select-dropdown::-webkit-scrollbar-thumb {
+    background-color: var(--az-button-foreground);
+    border: 2px solid var(--az-button-hover);
+}
+
+.az-select-button .az-select-dropdown::-webkit-scrollbar-track {
+    background-color: var(--az-button-hover);
+}
+
+/* #endregion */
+
+/* #region .az-link-button specifics */
+
+
+.az-link-button:not(.pure)::after {
+    content: "↘";
+}
+
+.az-link-button[target="_blank"]:not(.pure)::after {
     content: "↗";
 }
 
-a.az-link-button[href^='#']:not(.pure)::after {
+.az-link-button[href^='#']:not(.pure)::after {
     content: "#";
 }
 
 /* #endregion */
 
-/* #region button.az-button specifics */
+/* #region .az-button specifics */
 
-button.az-button.az-button-copy:not(.pure)::after {
+.az-button.az-button-copy:not(.pure)::after {
     content: "«";
 }
 
 /* #endregion */
 
-/* #region label.az-input-button specifics */
+/* #region .az-input-button specifics */
 
-label.az-input-button input {
+.az-input-button input {
     background: var(--az-button-hover);
     color: var(--az-button-foreground);
     border: none;
@@ -59,73 +125,73 @@ label.az-input-button input {
 }
 
 
-label.az-input-button:has(input[type=number]) {
+.az-input-button:has(input[type=number]) {
     cursor: text;
 }
 
 /*
-label.az-input-button:has(input:is([type=text], [type=range])) {
+.az-input-button:has(input:is([type=text], [type=range])) {
 } */
 
-label.az-input-button input[type=number] {
+.az-input-button input[type=number] {
     -moz-appearance: textfield;
     appearance: none;
     width: 5em;
-    padding: 0 .45em;
+    padding: 0 0.5ch;
 }
 
-label.az-input-button input[type=number]::-webkit-outer-spin-button,
-label.az-input-button input[type=number]::-webkit-inner-spin-button {
+.az-input-button input[type=number]::-webkit-outer-spin-button,
+.az-input-button input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-label.az-input-button input[type=text] {
-    padding: 0 .3em;
+.az-input-button input[type=text] {
+    padding: 0 0.5ch;
 }
 
-label.az-input-button input[type=range] {
+.az-input-button input[type=range] {
     -webkit-appearance: none;
     appearance: none;
     width: 8rem;
     background-color: var(--az-button-hover);
     cursor: ew-resize;
-    height: 0.5em;
+    height: 0.5ch;
 }
 
-label.az-input-button:hover input[type=range] {
+.az-input-button:hover input[type=range] {
     background-color: var(--az-button-background);
 }
 
-label.az-input-button input[type=range]::-webkit-slider-thumb {
+.az-input-button input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     background: var(--az-button-foreground);
-    width: 0.25em;
+    width: 0.5ch;
     height: 1em;
 }
 
-label.az-input-button:hover input[type=range]::-webkit-slider-thumb {
+.az-input-button:hover input[type=range]::-webkit-slider-thumb {
     background-color: var(--az-button-hover);
 }
 
 
-label.az-input-button input[type=range]::-moz-range-thumb {
+.az-input-button input[type=range]::-moz-range-thumb {
     background: var(--az-button-foreground);
-    width: 0.25em;
+    width: 0.5ch;
     height: 1em;
 }
 
-label.az-input-button:hover input[type=range]::-moz-range-thumb {
+.az-input-button:hover input[type=range]::-moz-range-thumb {
     background-color: var(--az-button-hover);
 }
 
 
-label.az-input-button input[type=color],
-label.az-input-button input[type=color]::-webkit-color-swatch-wrapper,
-label.az-input-button input[type=color]::-webkit-color-swatch,
-label.az-input-button input[type=color]::-moz-focus-inner,
-label.az-input-button input[type=color]::-moz-color-swatch {
+.az-input-button input[type=color],
+.az-input-button input[type=color]::-webkit-color-swatch-wrapper,
+.az-input-button input[type=color]::-webkit-color-swatch,
+.az-input-button input[type=color]::-moz-focus-inner,
+.az-input-button input[type=color]::-moz-color-swatch {
     -webkit-appearance: none;
     border: none;
     width: 2em;
@@ -142,42 +208,42 @@ label.az-input-button input[type=color]::-moz-color-swatch {
 
 /* #region coloring */
 
-:is(button.az-button, a.az-link-button, label.az-input-button):not([static]):hover {
+:is(.az-button, .az-link-button, .az-input-button, .az-select-button):not([static]):hover {
     background: var(--az-button-foreground);
     color: var(--az-button-hover);
 }
 
-:is(button.az-button, a.az-link-button, label.az-input-button).color-green {
+:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-green {
     --az-button-background: var(--c-green);
     --az-button-hover: var(--c-green-d);
 }
 
-:is(button.az-button, a.az-link-button, label.az-input-button).color-magenta {
+:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-magenta {
     --az-button-background: var(--c-magenta);
     --az-button-hover: var(--c-magenta-d);
 }
 
-:is(button.az-button, a.az-link-button, label.az-input-button).color-purple {
+:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-purple {
     --az-button-background: var(--c-purple);
     --az-button-hover: var(--c-purple-d);
 }
 
-:is(button.az-button, a.az-link-button, label.az-input-button).color-blue {
+:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-blue {
     --az-button-background: var(--c-blue);
     --az-button-hover: var(--c-blue-d);
 }
 
-:is(button.az-button, a.az-link-button, label.az-input-button).color-gold {
+:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-gold {
     --az-button-background: var(--c-gold);
     --az-button-hover: var(--c-gold-d);
 }
 
-:is(button.az-button, a.az-link-button, label.az-input-button).color-red {
+:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-red {
     --az-button-background: var(--c-red);
     --az-button-hover: var(--c-red-d);
 }
 
-:is(button.az-button, a.az-link-button, label.az-input-button).color-gray {
+:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-gray {
     --az-button-background: var(--c-gray);
     --az-button-hover: var(--c-gray-d);
 }
@@ -209,6 +275,39 @@ label.az-input-button input[type=color]::-moz-color-swatch {
 
 .az-span.color-gray {
     color: var(--c-gray-l);
+}
+
+.az-select-button option {
+    background: var(--c-green-d);
+    font-size: 0.8em;
+}
+
+.az-select-button.color-green option {
+    background: var(--c-green-d);
+}
+
+.az-select-button.color-magenta option {
+    background: var(--c-magenta-d);
+}
+
+.az-select-button.color-purple option {
+    background: var(--c-purple-d);
+}
+
+.az-select-button.color-blue option {
+    background: var(--c-blue-d);
+}
+
+.az-select-button.color-gold option {
+    background: var(--c-gold-d);
+}
+
+.az-select-button.color-red option {
+    background: var(--c-red-d);
+}
+
+.az-select-button.color-gray option {
+    background: var(--c-gray-d);
 }
 
 /*#endregion*/

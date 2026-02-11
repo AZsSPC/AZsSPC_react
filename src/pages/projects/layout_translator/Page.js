@@ -4,6 +4,7 @@ import AZInstrumentsPanel from '../../../components/elements/AZInstrumentsPanel'
 import './Styles.css'
 import { useState, useEffect, useMemo } from 'react'
 import { useNotify } from '../../../providers/NotificationProvider'
+import AZInputSelect from '../../../components/elements/AZInputSelect'
 
 function Page() {
     const notify = useNotify()
@@ -62,13 +63,8 @@ function Page() {
         <div className='translator-page'>
             <AZInstrumentsPanel>
                 <AZButton onClick={() => setInput('')} color='magenta'>Clear</AZButton>
-                <select id='from-layout' name='from-layout' value={fromLang} onChange={e => setFromLang(e.target.value)}>
-                    {LAYOUTS.map(l => <option key={l} value={l}>From "{l}"</option>)}
-                </select>
-
-                <select id='to-layout' name='to-layout' value={toLang} onChange={e => setToLang(e.target.value)}>
-                    {LAYOUTS.map(l => <option key={l} value={l}>To "{l}"</option>)}
-                </select>
+                <AZInputSelect options={LAYOUTS} value={fromLang} onChange={e => setFromLang(e.target.value)} label='From Layout' />
+                <AZInputSelect options={LAYOUTS} value={toLang} onChange={e => setToLang(e.target.value)} label='To Layout' />
                 <AZButtonCopy copy={output} disabled={!output} color='blue'>Copy output</AZButtonCopy>
             </AZInstrumentsPanel>
             <textarea id='text-input' value={input} onChange={e => (setInput(e.target.value))} placeholder='Input you cursed text here' />

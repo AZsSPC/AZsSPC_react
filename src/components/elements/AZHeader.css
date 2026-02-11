@@ -16,7 +16,7 @@ header {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: .5em;
+    gap: 1ch;
     align-items: center;
     justify-content: center;
     background: var(--c-header);
@@ -28,7 +28,7 @@ header>div {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: .5em;
+    gap: 1ch;
     align-items: center;
     justify-content: center;
 }
