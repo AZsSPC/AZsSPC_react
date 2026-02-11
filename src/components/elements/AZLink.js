@@ -1,8 +1,17 @@
-function AZLink({ children, href, classes = '', color, target, pure = false, ...props }) {
-    return <a className={`az-link-button ${classes} ${color ? `color-${color}` : ''} ${pure ? 'pure' : ''}`}
-        target={href && href.startsWith("http") ? "_blank" : target || ""}
-        rel="noreferrer"
-        href={href} {...props}>{children}</a>;
+function AZLink({ children, href, className = '', color, target, pure = false, ...props }) {
+    const isExternal = href?.startsWith('http');
+
+    return (
+        <a
+            className={`az-link-button ${className} ${color ? `color-${color}` : ''} ${pure ? 'pure' : ''}`}
+            href={href}
+            target={isExternal ? '_blank' : target}
+            rel={isExternal ? 'noreferrer' : undefined}
+            {...props}
+        >
+            {children}
+        </a>
+    );
 }
 
 export default AZLink;

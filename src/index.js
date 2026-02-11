@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { useEffect, useState } from 'react'
-import { NotificationProvider } from 'components/providers/NotificationProvider'
+import { NotificationProvider } from 'providers/NotificationProvider'
 import AZHeader from 'components/elements/AZHeader'
 import Page404 from 'pages/_404/Page.js'
 import './Styles.css';

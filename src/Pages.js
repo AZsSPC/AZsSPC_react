@@ -16,13 +16,13 @@ const PAGES = {
 }
 
 const PROJECTS = {
-    '/projects/layout_translator/': {
+    '/layout_translator/': {
         path: 'projects/layout_translator',
         title: 'Layout Translator',
         description: 'Insert mistyped russian or ukrainian text and receive the right version',
         tags: ['web', 'for all', 'translator', 'utility']
     },
-    '/projects/evo/': {
+    '/evo/': {
         path: 'projects/evo',
         title: 'Evo',
         description: 'An evolutionary simulation of cells',

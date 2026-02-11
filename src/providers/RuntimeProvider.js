@@ -7,6 +7,7 @@ export function RuntimeProvider({ children, initialTimeout = 100 }) {
     const [timeout, setTimeoutLocal] = useState(initialTimeout);
     const runnerRef = useRef(null);
     const runningRef = useRef(false);
+    const timeoutRef = useRef(initialTimeout);
 
     const registerRunner = useCallback((fn) => {
         runnerRef.current = fn;
@@ -17,11 +18,11 @@ export function RuntimeProvider({ children, initialTimeout = 100 }) {
         runningRef.current = true;
         setRunning(true);
         while (runningRef.current && runnerRef.current && runnerRef.current()) {
-            await new Promise((res) => setTimeout(res, timeout));
+            await new Promise((res) => setTimeout(res, timeoutRef.current));
         }
         runningRef.current = false;
         setRunning(false);
-    }, [timeout]);
+    }, []);
 
     const stop = useCallback(() => {
         runningRef.current = false;
@@ -33,8 +34,13 @@ export function RuntimeProvider({ children, initialTimeout = 100 }) {
         else start();
     }, [start, stop]);
 
+    const handleSetTimeout = useCallback((newTimeout) => {
+        timeoutRef.current = newTimeout;
+        setTimeoutLocal(newTimeout);
+    }, []);
+
     return (
-        <RuntimeContext.Provider value={{ running, timeout, setTimeout: setTimeoutLocal, registerRunner, start, stop, toggle }}>
+        <RuntimeContext.Provider value={{ running, timeout, setTimeout: handleSetTimeout, registerRunner, start, stop, toggle }}>
             {children}
         </RuntimeContext.Provider>
     );

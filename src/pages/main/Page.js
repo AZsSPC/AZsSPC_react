@@ -1,5 +1,6 @@
 import './Styles.css';
-import { AZButton, AZButtonCopy } from '../../components/elements/AZButton';
+import AZButton from '../../components/elements/AZButton'
+import AZButtonCopy from '../../components/elements/AZButtonCopy'
 import AZLink from '../../components/elements/AZLink';
 import AZSpan from '../../components/elements/AZSpan';
 import { PAGES } from '../../Pages.js';

@@ -1,8 +1,9 @@
-import AZButton, { AZButtonCopy } from '../../../components/elements/AZButton'
+import AZButton from '../../../components/elements/AZButton'
+import AZButtonCopy from '../../../components/elements/AZButtonCopy'
 import AZInstrumentsPanel from '../../../components/elements/AZInstrumentsPanel'
 import './Styles.css'
 import { useState, useEffect, useMemo } from 'react'
-import { useNotify } from '../../../components/providers/NotificationProvider'
+import { useNotify } from '../../../providers/NotificationProvider'
 
 function Page() {
     const notify = useNotify()

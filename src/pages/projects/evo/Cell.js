@@ -7,7 +7,7 @@ const ACTION = { NONE: 0, MOVE: 1, RIGHT: 2, LEFT: 3, EAT: 4, HIT: 5, A: 6, B: 7
 
 export default class Cell {
 	constructor(braincells = 1, gen = 0, vis = null, dna = null, refs = {}) {
-		const { idCounterRef, fixerRef, petriRef, widthRef } = refs;
+		const { idCounterRef, fixerRef } = refs;
 
 		this.id = idCounterRef.current++;
 		this.fixer = fixerRef.current;
@@ -29,7 +29,7 @@ export default class Cell {
 	}
 
 	step(x, y) {
-		const { idCounterRef, fixerRef, petriRef, widthRef } = this._refs;
+		const {  fixerRef, petriRef } = this._refs;
 
 		if (this.vis < 1 || this.age > this.lima) {
 			this.die(x, y);

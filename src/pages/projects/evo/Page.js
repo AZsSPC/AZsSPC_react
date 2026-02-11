@@ -2,11 +2,11 @@ import AZInstrumentsPanel from '../../../components/elements/AZInstrumentsPanel'
 import AZInputRange from '../../../components/elements/AZInputRange';
 import AZInputValue from '../../../components/elements/AZInputValue';
 import AZRuntimeButton from '../../../components/elements/AZRuntimeButton';
-import RuntimeProvider, { useRuntime } from '../../../components/providers/RuntimeProvider';
-import Cell, { DEFGENES, MUTATE_COUNT, MUTATE_CHANCE, TYPE, ROTATE, ACTION } from './Cell';
+import RuntimeProvider, { useRuntime } from '../../../providers/RuntimeProvider';
+import Cell, { TYPE } from './Cell';
 import AZButton from '../../../components/elements/AZButton';
 import './Styles.css';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 
 export default function Page() {
@@ -34,7 +34,8 @@ export default function Page() {
 
 	const gameCtxRef = useRef(null);
 
-	const draw = useCallback(() => {
+	const draw = useCallback((force) => {
+		const doForce = !!force;
 		const ctx = gameCtxRef.current;
 		if (!ctx) return;
 		const petri = petriRef.current;
@@ -46,7 +47,8 @@ export default function Page() {
 		const pul_rad = pulRadRef.current;
 		const target = targetRef.current;
 
-		if (runtimeTimeoutRef.current < 10 && stepsRef.current % 10 !== 0) return;
+		// Only skip frames during runtime with very fast speed for performance
+		if (!doForce && runtimeTimeoutRef.current < 10 && stepsRef.current % 10 !== 0) return;
 
 		let tx = -1,
 			ty = -1;
@@ -74,8 +76,8 @@ export default function Page() {
 					ctx.lineWidth = 1;
 					ctx.strokeStyle = 'black';
 					const r = 0.78 * petri[x][y].way;
-					const fx = (x + 0.5) * cof,
-						fy = (y + 0.5) * cof;
+					const fx = (x + 0.5) * cof;
+					const fy = (y + 0.5) * cof;
 					ctx.fillStyle = petri[x][y].kin;
 					ctx.beginPath();
 					ctx.arc(fx, fy, cell_rad, 0, 7);
@@ -108,7 +110,7 @@ export default function Page() {
 		ctx.stroke();
 	}, []);
 
-	function cycle() {
+	const cycle = useCallback(() => {
 		fixerRef.current = !fixerRef.current;
 		const petri = petriRef.current;
 		const width = widthRef.current;
@@ -125,7 +127,7 @@ export default function Page() {
 		draw();
 		stepsRef.current++;
 		return true;
-	}
+	}, [draw]);
 
 	const setup = useCallback(() => {
 		stepsRef.current = 0;
@@ -151,7 +153,7 @@ export default function Page() {
 		draw();
 	}, [draw]);
 
-	function screen_clicked(e) {
+	const screen_clicked = useCallback((e) => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
 		const rect = canvas.getBoundingClientRect();
@@ -159,9 +161,9 @@ export default function Page() {
 		const y = ((e.clientY - rect.top) / canvas.offsetHeight * 1000 / cofRef.current) | 0;
 		const cell = petriRef.current[x] && petriRef.current[x][y];
 		targetRef.current = typeof cell === 'object' ? { id: cell.id, type: TYPE.CELL } : { x: x, y: y, type: -TYPE.CELL };
-		draw();
+		draw(true);
 		if (typeof cell === 'object' && cell.prettyLog) cell.prettyLog();
-	}
+	}, [draw]);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -200,36 +202,34 @@ export default function Page() {
 			canvas.removeEventListener('click', handleClick);
 			document.removeEventListener('keydown', keyHandler);
 		};
-	}, [setup]);
+	}, [cycle, setup, screen_clicked]);
 
 	function Inner() {
-		const { registerRunner, timeout, setTimeout } = useRuntime();
+		const { registerRunner, timeout, setTimeout, running } = useRuntime();
 
-		useEffect(() => {
-			registerRunner(cycle);
-		}, [registerRunner]);
+		useEffect(() => { registerRunner(cycle); }, [registerRunner]);
 
-		useEffect(() => {
-			runtimeTimeoutRef.current = timeout;
-		}, [timeout]);
+		useEffect(() => { runtimeTimeoutRef.current = timeout; }, [timeout]);
+
+		useEffect(() => { if (!running) { draw(true); } }, [running]);
 
 		return (
 			<>
 				<AZInstrumentsPanel>
-					<AZInputValue ref={iwRef} label="Size"
+					<AZInputValue ref={iwRef} label="Size" color="magenta"
 						min={10} max={100} step={1} defaultValue={20}
 					/>
-					<AZInputValue ref={ibRef} label="Brain cells"
+					<AZInputValue ref={ibRef} label="Brain cells" color="magenta"
 						min={1} max={50} step={1} defaultValue={5}
 					/>
 					<AZButton onClick={setup} color="gold">Refresh</AZButton>
 					<AZRuntimeButton />
 
-					<AZInputRange ref={foodRef} label="Food per cycle"
+					<AZInputRange ref={foodRef} label="Food per cycle" color="magenta"
 						min={0} max={50} defaultValue={5}
 						onChange={(e) => { fcRef.current = parseInt(e.target.value, 10) || 0; }}
 					/>
-					<AZInputRange ref={speedRef} label="Delay between steps"
+					<AZInputRange ref={speedRef} label="Delay between steps" color="magenta"
 						min={0} max={1000} defaultValue={runtimeTimeoutRef.current}
 						onChange={(e) => { setTimeout(parseInt(e.target.value, 10) || 0); }}
 					/>

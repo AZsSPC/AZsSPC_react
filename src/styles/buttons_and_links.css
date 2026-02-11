@@ -1,6 +1,5 @@
 button.az-button,
 a.az-link-button,
-label.az-input-button,
 label.az-input-button {
     overflow: hidden;
     --az-button-background: var(--c-green);
@@ -11,7 +10,7 @@ label.az-input-button {
     border-radius: 1em;
     border: none;
     padding: 0 0.45em;
-    margin: 0.1em;
+    margin: 0;
     cursor: pointer;
     text-decoration: none;
     display: inline-flex;
@@ -52,23 +51,26 @@ button.az-button.az-button-copy:not(.pure)::after {
 /* #region label.az-input-button specifics */
 
 label.az-input-button input {
+    font-size: 0.8em;
     background: var(--az-button-hover);
     color: var(--az-button-foreground);
     border: none
 }
 
+/* 
 label.az-input-button {
     padding: 2px 0.4em;
-}
+    } */
 
 label.az-input-button:has(input:is([type=number], [type=text], [type=range])) {
-    padding: 2px 2px 2px 0.4em;
+    padding-right: 0.1em;
 }
 
 label.az-input-button input[type=number] {
     width: 5em;
     border-radius: 1em;
     padding: 0 .3em;
+
 }
 
 label.az-input-button input[type=number]::-webkit-outer-spin-button,

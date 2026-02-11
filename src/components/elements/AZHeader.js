@@ -1,6 +1,7 @@
 import AZLink from './AZLink';
-import { AZButton, AZButtonCopy } from './AZButton';
-import { useNotify } from "../providers/NotificationProvider";
+import AZButton from '../../components/elements/AZButton'
+import AZButtonCopy from '../../components/elements/AZButtonCopy'
+import { useNotify } from "../../providers/NotificationProvider";
 import { ALL_PAGES } from '../../Pages.js';
 import './AZHeader.css';
 
