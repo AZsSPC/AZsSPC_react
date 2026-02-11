@@ -7,19 +7,20 @@ label.az-input-button {
     --az-button-foreground: var(--c-white-text);
     background: var(--az-button-background);
     color: var(--az-button-foreground);
-    border-radius: 1em;
+    border-radius: 0.25em;
     border: none;
-    padding: 0 0.45em;
+    padding: 0 0.3em;
     margin: 0;
     cursor: pointer;
     text-decoration: none;
     display: inline-flex;
     flex-direction: row;
-    align-items: center;
     gap: 0.5em;
     justify-content: space-between;
     transition: 200ms;
     word-break: break-word;
+    position: relative;
+    align-items: center;
 }
 
 /* #region a.az-link-button specifics */
@@ -51,26 +52,26 @@ button.az-button.az-button-copy:not(.pure)::after {
 /* #region label.az-input-button specifics */
 
 label.az-input-button input {
-    font-size: 0.8em;
     background: var(--az-button-hover);
     color: var(--az-button-foreground);
-    border: none
+    border: none;
+    line-height: 1em;
 }
 
-/* 
-label.az-input-button {
-    padding: 2px 0.4em;
-    } */
 
-label.az-input-button:has(input:is([type=number], [type=text], [type=range])) {
-    padding-right: 0.1em;
+label.az-input-button:has(input[type=number]) {
+    cursor: text;
 }
+
+/*
+label.az-input-button:has(input:is([type=text], [type=range])) {
+} */
 
 label.az-input-button input[type=number] {
+    -moz-appearance: textfield;
+    appearance: none;
     width: 5em;
-    border-radius: 1em;
-    padding: 0 .3em;
-
+    padding: 0 .45em;
 }
 
 label.az-input-button input[type=number]::-webkit-outer-spin-button,
@@ -80,25 +81,45 @@ label.az-input-button input[type=number]::-webkit-inner-spin-button {
 }
 
 label.az-input-button input[type=text] {
-    border-radius: 1em;
     padding: 0 .3em;
 }
 
 label.az-input-button input[type=range] {
-    width: 8em;
+    -webkit-appearance: none;
+    appearance: none;
+    width: 8rem;
     background-color: var(--az-button-hover);
     cursor: ew-resize;
-    border-radius: 1em;
+    height: 0.5em;
 }
 
-label.az-input-button input[type=range]::-moz-range-thumb,
-label.az-input-button input[type=range]::-moz-range-thumb {
-    border: solid 2px var(--az-button-hover);
-    background: transparent;
-    background: var(--az-button-foreground);
-    box-sizing: border-box;
-    border-radius: 1em;
+label.az-input-button:hover input[type=range] {
+    background-color: var(--az-button-background);
 }
+
+label.az-input-button input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--az-button-foreground);
+    width: 0.25em;
+    height: 1em;
+}
+
+label.az-input-button:hover input[type=range]::-webkit-slider-thumb {
+    background-color: var(--az-button-hover);
+}
+
+
+label.az-input-button input[type=range]::-moz-range-thumb {
+    background: var(--az-button-foreground);
+    width: 0.25em;
+    height: 1em;
+}
+
+label.az-input-button:hover input[type=range]::-moz-range-thumb {
+    background-color: var(--az-button-hover);
+}
+
 
 label.az-input-button input[type=color],
 label.az-input-button input[type=color]::-webkit-color-swatch-wrapper,

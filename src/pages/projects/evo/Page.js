@@ -1,4 +1,4 @@
-import AZInstrumentsPanel from '../../../components/elements/AZInstrumentsPanel';
+import AZInstrumentsPanel, { AZInstrumentsSubpanel } from '../../../components/elements/AZInstrumentsPanel';
 import AZInputRange from '../../../components/elements/AZInputRange';
 import AZInputValue from '../../../components/elements/AZInputValue';
 import AZRuntimeButton from '../../../components/elements/AZRuntimeButton';
@@ -216,23 +216,26 @@ export default function Page() {
 		return (
 			<>
 				<AZInstrumentsPanel>
-					<AZInputValue ref={iwRef} label="Size" color="magenta"
-						min={10} max={100} step={1} defaultValue={20}
-					/>
-					<AZInputValue ref={ibRef} label="Brain cells" color="magenta"
-						min={1} max={50} step={1} defaultValue={5}
-					/>
-					<AZButton onClick={setup} color="gold">Refresh</AZButton>
-					<AZRuntimeButton />
-
-					<AZInputRange ref={foodRef} label="Food per cycle" color="magenta"
-						min={0} max={50} defaultValue={5}
-						onChange={(e) => { fcRef.current = parseInt(e.target.value, 10) || 0; }}
-					/>
-					<AZInputRange ref={speedRef} label="Delay between steps" color="magenta"
-						min={0} max={1000} defaultValue={runtimeTimeoutRef.current}
-						onChange={(e) => { setTimeout(parseInt(e.target.value, 10) || 0); }}
-					/>
+					<AZInstrumentsSubpanel>
+						<AZInputValue ref={iwRef} label="Size" color="magenta"
+							min={10} max={100} step={1} defaultValue={20}
+						/>
+						<AZInputValue ref={ibRef} label="Brain cells" color="magenta"
+							min={1} max={50} step={1} defaultValue={5}
+						/>
+						<AZButton onClick={setup} color="gold">Reset</AZButton>
+						<AZRuntimeButton />
+					</AZInstrumentsSubpanel>
+					<AZInstrumentsSubpanel>
+						<AZInputRange ref={foodRef} label="Food per cycle" color="green"
+							min={0} max={50} defaultValue={5}
+							onChange={(e) => { fcRef.current = parseInt(e.target.value, 10) || 0; }}
+						/>
+						<AZInputRange ref={speedRef} label="Delay between steps" color="purple"
+							min={0} max={1000} defaultValue={runtimeTimeoutRef.current}
+							onChange={(e) => { setTimeout(parseInt(e.target.value, 10) || 0); }}
+						/>
+					</AZInstrumentsSubpanel>
 				</AZInstrumentsPanel>
 				<canvas ref={canvasRef} id="game" className="unselectable" width={1000} height={1000} />
 			</>

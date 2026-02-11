@@ -5,7 +5,7 @@ import { NotificationProvider } from 'providers/NotificationProvider'
 import AZHeader from 'components/elements/AZHeader'
 import Page404 from 'pages/_404/Page.js'
 import './Styles.css';
-import 'styles/buttons_and_links.css';
+import './AZBasicElements.css';
 import { ALL_PAGES } from './Pages.js';
 
 const App = () => {

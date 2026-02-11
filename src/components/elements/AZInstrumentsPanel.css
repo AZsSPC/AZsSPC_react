@@ -1,5 +1,5 @@
 .az-instruments-panel {
-    padding: .75em 4em;
+    padding: .75em;
     min-height: 48px;
     display: flex;
     flex-direction: row;
@@ -18,4 +18,13 @@
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
+}
+
+.az-instruments-panel .az-instruments-subpanel {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: .5em;
+    align-items: center;
+    justify-content: center;
 }

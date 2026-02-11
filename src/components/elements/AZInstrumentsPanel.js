@@ -8,4 +8,13 @@ function AZInstrumentsPanel({ children }) {
     )
 }
 
+function AZInstrumentsSubpanel({ children }) {
+    return (
+        <div className='az-instruments-subpanel'>
+            {children}
+        </div>
+    )
+}
+
 export default AZInstrumentsPanel
+export { AZInstrumentsSubpanel }
