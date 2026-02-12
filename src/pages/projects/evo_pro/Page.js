@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
 import AZButton from '../../../components/elements/AZButton';
-import Cell from './Cell'
+import Cell from './Cell';
+import HexWorld from './HexWorld';
 
 export default function DNAInterpreter() {
 	const [cell, setCell] = useState(new Cell());
+	const [regenKey, setRegenKey] = useState(0);
 
 	function generate() {
 		setCell(Cell.random());
+		setRegenKey(prev => prev + 1);
 	}
 
 	return (
 		<>
 			<h3>DNA Interpreter</h3>
 
-			<AZButton onClick={generate}>Generate Random DNA</AZButton>
+			<AZButton onClick={generate}>
+				Generate Random DNA + Regenerate Map
+			</AZButton>
 
 			<div style={{ marginTop: 10 }}>
 				<strong>DNA: </strong>
@@ -22,28 +27,19 @@ export default function DNAInterpreter() {
 				</span>
 			</div>
 
-			<div style={{ marginTop: 10, display: 'flex', alignItems: 'center' }}>
+			<div style={{ marginTop: 10 }}>
 				<strong>Color:</strong>
-
-				<div style={{
-					width: '2em',
-					height: '2em',
-					border: `3px solid color-mix(in srgb, ${cell.getFrontColorCSS()}, ${cell.getBackColorCSS()})`,
-					borderRadius: '1em',
-					background: `radial-gradient(at 150%, ${cell.getFrontColorCSS()} 50%, ${cell.getBackColorCSS()} 50%)`
-				}} />
-
+				<div
+					style={{
+						width: '2em',
+						height: '2em',
+						borderRadius: '1em',
+						background: cell.getFrontColorCSS()
+					}}
+				/>
 			</div>
 
-			<div style={{ marginTop: 20 }}>
-				<strong>Decoded Instructions:</strong>
-
-				{cell.getInstructions().map((inst, i) =>
-					<div key={i} style={{ color: (inst.color || 'white') }}>
-						[{i * 2}] {inst.chunk.slice(0, 2)}:{inst.chunk.slice(2)} {inst.name}
-					</div>
-				)}
-			</div>
+			<HexWorld regenerateKey={regenKey} />
 		</>
 	);
 }
