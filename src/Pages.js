@@ -28,6 +28,12 @@ const PROJECTS = {
         description: 'An evolutionary simulation of cells',
         tags: ['web', 'for all', 'simulation', 'evolution']
     },
+    '/evo2/': {
+        path: 'projects/evo_pro',
+        title: 'Evo 2.0',
+        description: 'An advanced evolutionary simulation of cells',
+        tags: ['web', 'for all', 'simulation', 'evolution']
+    },
 
 }
 
