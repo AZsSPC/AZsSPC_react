@@ -119,6 +119,7 @@ export default class Cell {
 	constructor(dna = DEFAULT_DNA) {
 		this.dna = dna.toUpperCase();
 		this.headerSize = HEADER_SIZE;
+		this.rotation = Math.random() * 6 | 0;
 
 		this.header = this.dna.slice(0, this.headerSize);
 		this.code = this.dna.slice(this.headerSize);
