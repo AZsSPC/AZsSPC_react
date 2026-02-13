@@ -1,12 +1,15 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
-const HEX_SIZE = 4;
+const HEX_SIZE = 2;
+
+/* =========================
+   GEOMETRY HELPERS
+========================= */
 
 function createHexGeometry(radius = HEX_SIZE) {
     const shape = new THREE.Shape();
 
-    // Pointy-top hex
     for (let i = 0; i < 6; i++) {
         const angle = Math.PI / 3 * i + Math.PI / 2;
         const x = radius * Math.cos(angle);
@@ -19,10 +22,10 @@ function createHexGeometry(radius = HEX_SIZE) {
     shape.closePath();
     return new THREE.ShapeGeometry(shape);
 }
-function createCellGeometry() {
-    return new THREE.CircleGeometry(HEX_SIZE * 0.7, 16);
-}
 
+function createCellGeometry() {
+    return new THREE.CircleGeometry(HEX_SIZE * 0.75, 16);
+}
 
 // odd-q vertical layout
 function axialToWorld(q, r) {
@@ -32,116 +35,185 @@ function axialToWorld(q, r) {
     };
 }
 
-export default function HexWorld({ regenerateKey, petri, petri_size }) {
+/* =========================
+   COMPONENT
+========================= */
+
+export default function HexWorld({ regenerateKey, petri, petri_size, time }) {
+
     const mountRef = useRef(null);
+    const threeRef = useRef(null);
+
+    /* ---------- Stable GPU resources ---------- */
+
+    const tileGeo = useMemo(() => createHexGeometry(), []);
+    const cellGeo = useMemo(() => createCellGeometry(), []);
+
+    const tileMat = useMemo(
+        () => new THREE.MeshBasicMaterial({ vertexColors: true }),
+        []
+    );
+
+    const cellMat = useMemo(() => new THREE.ShaderMaterial({
+
+        vertexShader: `
+            attribute vec3 instanceFrontColor;
+            attribute vec3 instanceBackColor;
+            attribute float instanceSize;
+
+            varying vec3 vFrontColor;
+            varying vec3 vBackColor;
+            varying float vScale;
+            varying vec2 vUv;
+
+            void main() {
+                vFrontColor = instanceFrontColor;
+                vBackColor = instanceBackColor;
+                vScale = mix(0.3, 1.0, instanceSize / 100.0);
+                vUv = uv;
+
+                vec4 worldPosition = instanceMatrix * vec4(position, 1.0);
+                gl_Position = projectionMatrix * modelViewMatrix * worldPosition;
+            }`,
+        fragmentShader: `
+            varying vec3 vFrontColor;
+            varying vec3 vBackColor;
+            varying float vScale;
+            varying vec2 vUv;
+
+            void main() {
+                vec2 centerEllipse = vec2(1.0, 0.5); 
+                vec2 centerCircle = vec2(0.5, 0.5);
+
+                vec2 scaledUV = (vUv - centerEllipse) / vec2(1.5, 0.5);
+
+                float distEllipse = length(scaledUV);
+                float distCircle = length(vUv - centerCircle);
+
+                float fillT = smoothstep(0.5, 0.55, distEllipse);
+                vec3 col = mix(vFrontColor, vBackColor, fillT);
+
+                vec3 outlineColor = (vFrontColor + vBackColor) * 0.7 + vec3(0.15);
+
+                float outlineCircle = smoothstep(0.42, 0.45, distCircle) - smoothstep(0.5, 1.0, distCircle);
+                float outlineEllipse = smoothstep(0.45, 0.5, distEllipse / vScale) - smoothstep(0.52, 0.55, distEllipse);
+
+                float outlineMask = max(outlineCircle, outlineEllipse);
+
+                col = mix(col, outlineColor, outlineMask);
+
+                gl_FragColor = vec4(col, 1.0);
+            }`,
+
+        depthTest: true,
+        depthWrite: true
+    }), []);
+
+    /* ==========================================================
+       EFFECT A — INITIALIZE THREE (RUNS ONCE)
+    ========================================================== */
 
     useEffect(() => {
+
         const container = mountRef.current;
         if (!container) return;
 
         const width = container.clientWidth || 800;
         const height = container.clientHeight || 600;
 
-        // Scene
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x2a2a2a);
-
-        // Orthographic camera for 2D grid
-        const aspect = width / height;
-        const viewSize = 60;
-
-        const camera = new THREE.OrthographicCamera(-viewSize * aspect, viewSize * aspect, viewSize, -viewSize, 0.1, 1000);
-
-        camera.position.set(0, 0, 100);
-        camera.lookAt(0, 0, 0);
-
-        // Renderer
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(width, height);
         container.appendChild(renderer.domElement);
 
-        // Geometry
-        const tileGeo = createHexGeometry();
-        const cellGeo = createCellGeometry();
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x2a2a2a);
 
-        // Materials must enable vertexColors
-        const tileMat = new THREE.MeshBasicMaterial();
-        const cellMat = new THREE.ShaderMaterial({
-            vertexShader: `
-                attribute vec3 instanceFrontColor;
-                attribute vec3 instanceBackColor;
+        const aspect = width / height;
+        const viewSize = 60;
 
-                varying vec3 vFrontColor;
-                varying vec3 vBackColor;
-                varying vec2 vUv;
+        const camera = new THREE.OrthographicCamera(
+            -viewSize * aspect,
+            viewSize * aspect,
+            viewSize,
+            -viewSize,
+            0.1,
+            100
+        );
 
-                void main() {
-                    vFrontColor = instanceFrontColor;
-                    vBackColor = instanceBackColor;
-                    vUv = uv;
+        camera.position.set(0, 0, 10);
 
-                    vec4 worldPosition = instanceMatrix * vec4(position, 1.0);
-                    gl_Position = projectionMatrix * modelViewMatrix * worldPosition;
-                }`,
-            fragmentShader: `
-                varying vec3 vFrontColor;
-                varying vec3 vBackColor;
-                varying vec2 vUv;
+        const maxCount = petri_size.x * petri_size.y;
 
-                void main() {
-                    vec2 centerEllipse = vec2(1.2, 0.5); 
-                    vec2 centerCircle = vec2(0.5, 0.5);
+        const tiles = new THREE.InstancedMesh(tileGeo, tileMat, maxCount);
+        const cells = new THREE.InstancedMesh(cellGeo, cellMat, maxCount);
 
-                    // Precompute scaled UV for ellipse
-                    vec2 scaledUV = vUv - centerEllipse;
-                    scaledUV.x /= 1.5;
-                    scaledUV.y /= 0.5;
+        scene.add(tiles);
+        scene.add(cells);
 
-                    // Cache distances
-                    float distEllipse = length(scaledUV);
-                    float distCircle = length(vUv - centerCircle);
+        /* Allocate instanced attributes ONCE */
 
-                    // Ellipsoid gradient fill
-                    float fillT = smoothstep(0.5, 0.55, distEllipse);
-                    vec3 col = mix(vFrontColor, vBackColor, fillT);
+        const frontColors =
+            new THREE.InstancedBufferAttribute(new Float32Array(maxCount * 3), 3);
 
-                    // Outline color (average with white)
-                    vec3 outlineColor = (vFrontColor + vBackColor) * 0.5 + vec3(0.3);
+        const backColors =
+            new THREE.InstancedBufferAttribute(new Float32Array(maxCount * 3), 3);
 
-                    // Compute outline masks
-                    float outlineCircle = smoothstep(0.4, 0.45, distCircle) - smoothstep(0.5, 0.52, distCircle);
-                    float outlineEllipse = smoothstep(0.45, 0.5, distEllipse) - smoothstep(0.6, 0.62, distEllipse);
+        const scales =
+            new THREE.InstancedBufferAttribute(new Float32Array(maxCount), 1);
 
-                    // Combine outlines
-                    float outlineMask = max(outlineCircle, outlineEllipse);
+        cells.geometry.setAttribute('instanceFrontColor', frontColors);
+        cells.geometry.setAttribute('instanceBackColor', backColors);
+        cells.geometry.setAttribute('instanceSize', scales);
 
-                    // Apply outline once
-                    col = mix(col, outlineColor, outlineMask);
+        threeRef.current = {
+            renderer,
+            scene,
+            camera,
+            tiles,
+            cells,
+            frontColors,
+            backColors,
+            scales
+        };
 
-                    gl_FragColor = vec4(col, 1.0);
+        const animate = () => {
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        };
+        animate();
 
-                }`,
-            transparent: false,
-            depthTest: true,
-            depthWrite: true
-        });
+        return () => {
+            renderer.dispose();
+            container.removeChild(renderer.domElement);
+        };
+
+    }, [cellGeo, cellMat, petri_size, tileGeo, tileMat]);
 
 
+    /* ==========================================================
+       EFFECT B — UPDATE INSTANCE DATA (FAST PATH)
+    ========================================================== */
 
-        const tileCount = petri_size.x * petri_size.y;
+    useEffect(() => {
 
-        const tiles = new THREE.InstancedMesh(tileGeo, tileMat, tileCount);
-        const cells = new THREE.InstancedMesh(cellGeo, cellMat, tileCount);
-        const frontColors = new Float32Array(tileCount * 3);
-        const backColors = new Float32Array(tileCount * 3);
+        const ctx = threeRef.current;
+        if (!ctx) return;
 
+        const {
+            tiles,
+            cells,
+            frontColors,
+            backColors,
+            scales
+        } = ctx;
 
         const dummy = new THREE.Object3D();
-        const color = new THREE.Color();
+        const color = new THREE.Color('#111');
 
-        // Compute grid bounds properly
-        const totalWidth = HEX_SIZE * Math.sqrt(3) * (petri_size.y + 0.5);
-        const totalHeight = HEX_SIZE * 1.5 * petri_size.x;
+        const totalWidth =
+            HEX_SIZE * Math.sqrt(3) * (petri_size.y + 0.5);
+        const totalHeight =
+            HEX_SIZE * 1.5 * petri_size.x;
 
         const offsetX = totalWidth / 2;
         const offsetY = totalHeight / 2;
@@ -151,38 +223,40 @@ export default function HexWorld({ regenerateKey, petri, petri_size }) {
 
         for (let q = 0; q < petri_size.x; q++) {
             for (let r = 0; r < petri_size.y; r++) {
-                const cell = petri[q][r];           // ← use real petri cell or null
 
+                const cell = petri[q][r];
                 const { x, y } = axialToWorld(q, r);
+
                 const worldX = x - offsetX;
                 const worldY = y - offsetY;
 
-                dummy.rotation.set(0, 0, 0);
-                // Tile (always drawn)
+                /* tiles */
                 dummy.position.set(worldX, worldY, 0);
+                dummy.rotation.set(0, 0, 0);
                 dummy.updateMatrix();
-                tiles.setMatrixAt(index, dummy.matrix);
 
-                color.set('#' + (16 + Math.random() * 10 | 0).toString(16).repeat(3));
+                tiles.setMatrixAt(index, dummy.matrix);
                 tiles.setColorAt(index, color);
 
-                // Cell (only if exists)
+                /* cells */
                 if (cell) {
-                    dummy.rotation.set(0, 0, cell.rotation / 6 * 2 * Math.PI); // full circle in radians
+
                     dummy.position.set(worldX, worldY, 0.01);
+                    dummy.rotation.set(
+                        0,
+                        0,
+                        (cell.rotation + time) / 6 * Math.PI * 2
+                    );
+
                     dummy.updateMatrix();
                     cells.setMatrixAt(cellIndex, dummy.matrix);
 
                     const front = new THREE.Color(cell.getFrontColorCSS());
                     const back = new THREE.Color(cell.getBackColorCSS());
 
-                    frontColors[cellIndex * 3 + 0] = front.r;
-                    frontColors[cellIndex * 3 + 1] = front.g;
-                    frontColors[cellIndex * 3 + 2] = front.b;
-
-                    backColors[cellIndex * 3 + 0] = back.r;
-                    backColors[cellIndex * 3 + 1] = back.g;
-                    backColors[cellIndex * 3 + 2] = back.b;
+                    frontColors.setXYZ(cellIndex, front.r, front.g, front.b);
+                    backColors.setXYZ(cellIndex, back.r, back.g, back.b);
+                    scales.setX(cellIndex, cell.stat.mass | 0);
 
                     cellIndex++;
                 }
@@ -191,44 +265,23 @@ export default function HexWorld({ regenerateKey, petri, petri_size }) {
             }
         }
 
+        cells.count = cellIndex;
+
         tiles.instanceMatrix.needsUpdate = true;
         tiles.instanceColor.needsUpdate = true;
-
-        cells.count = cellIndex;
         cells.instanceMatrix.needsUpdate = true;
 
-        cells.geometry.setAttribute(
-            'instanceFrontColor',
-            new THREE.InstancedBufferAttribute(frontColors, 3)
-        );
+        frontColors.needsUpdate = true;
+        backColors.needsUpdate = true;
+        scales.needsUpdate = true;
 
-        cells.geometry.setAttribute(
-            'instanceBackColor',
-            new THREE.InstancedBufferAttribute(backColors, 3)
-        );
-        cells.instanceMatrix.needsUpdate = true;
-        cells.geometry.attributes.instanceFrontColor.needsUpdate = true;
-        cells.geometry.attributes.instanceBackColor.needsUpdate = true;
+    }, [petri, petri_size, time, regenerateKey]);
 
-        scene.add(tiles);
-        scene.add(cells);
 
-        function animate() {
-            renderer.render(scene, camera);
-            requestAnimationFrame(animate);
-        }
-
-        animate();
-
-        return () => {
-            renderer.dispose();
-            tileGeo.dispose();
-            cellGeo.dispose();
-            tileMat.dispose();
-            cellMat.dispose();
-            container.removeChild(renderer.domElement);
-        };
-    }, [regenerateKey, petri, petri_size]);
-
-    return (<div ref={mountRef} style={{ width: '100%', height: '85dvh' }} />);
+    return (
+        <div
+            ref={mountRef}
+            style={{ width: '100%', height: '85dvh' }}
+        />
+    );
 }

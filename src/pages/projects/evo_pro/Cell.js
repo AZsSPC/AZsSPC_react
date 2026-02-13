@@ -116,10 +116,20 @@ function randomColorDNA() {
 }
 
 export default class Cell {
-	constructor(dna = DEFAULT_DNA) {
+	constructor(dna = DEFAULT_DNA, stat = {}) {
 		this.dna = dna.toUpperCase();
 		this.headerSize = HEADER_SIZE;
 		this.rotation = Math.random() * 6 | 0;
+
+		this.stat = {
+			energy: 1,						// unlimited, energy<=0 means death
+			mass: Math.random() * 99 + 1,	// float 1-100, out of bounds means death
+			waste: 0,						// if 0-100, if bigger than mass - death
+			nutrient_green: 0,
+			nutrient_red: 0,
+			nutrient_blue: 0,
+			...stat				// override
+		};
 
 		this.header = this.dna.slice(0, this.headerSize);
 		this.code = this.dna.slice(this.headerSize);
@@ -147,9 +157,9 @@ export default class Cell {
 
 	#decodeRGB(chars) {
 		return {
-			r: ALPHABET.indexOf(chars[0]) * 7+15,
-			g: ALPHABET.indexOf(chars[1]) * 7+15,
-			b: ALPHABET.indexOf(chars[2]) * 7+15
+			r: ALPHABET.indexOf(chars[0]) * 7 + 15,
+			g: ALPHABET.indexOf(chars[1]) * 7 + 15,
+			b: ALPHABET.indexOf(chars[2]) * 7 + 15
 		};
 	}
 
