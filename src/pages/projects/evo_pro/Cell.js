@@ -147,9 +147,9 @@ export default class Cell {
 
 	#decodeRGB(chars) {
 		return {
-			r: ALPHABET.indexOf(chars[0]) * 8,
-			g: ALPHABET.indexOf(chars[1]) * 8,
-			b: ALPHABET.indexOf(chars[2]) * 8
+			r: ALPHABET.indexOf(chars[0]) * 7+15,
+			g: ALPHABET.indexOf(chars[1]) * 7+15,
+			b: ALPHABET.indexOf(chars[2]) * 7+15
 		};
 	}
 

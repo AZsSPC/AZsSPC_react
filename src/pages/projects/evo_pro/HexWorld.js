@@ -106,7 +106,7 @@ export default function HexWorld({ regenerateKey, petri, petri_size }) {
                     vec3 col = mix(vFrontColor, vBackColor, fillT);
 
                     // Outline color (average with white)
-                    vec3 outlineColor = (vFrontColor + vBackColor) * 0.375 + vec3(0.25);
+                    vec3 outlineColor = (vFrontColor + vBackColor) * 0.5 + vec3(0.3);
 
                     // Compute outline masks
                     float outlineCircle = smoothstep(0.4, 0.45, distCircle) - smoothstep(0.5, 0.52, distCircle);
