@@ -6,10 +6,29 @@ const DEFAULT_DNA = 'gs5.5d2.00.1000.1000.1000.1000.1000.1000.1000.1000.1000.1g0
 
 // 64-opcode instruction set
 const OPCODES = {
-	0: { name: 'NOP', desc: 'no operation', color: 'gray', cost: 1, time: 0 },
+	0: {
+		name: 'NOP', desc: 'no operation', color: 'gray',
+		cost: { energy: 1, mass: 1, waste: 0, nutrient_green: 0, nutrient_red: 0, nutrient_blue: 0, },
+		action: (cell_tile, target_tile) => { return { cell_tile, target_tile }; }
+	},
 	1: { name: 'RAND_R0', desc: 'R0 = random 0–255' },
-	2: { name: 'MOVE', desc: 'move forward', color: 'yellow' },
-	3: { name: 'SPLIT', desc: 'divide organism' },
+	2: {
+		name: 'MOVE', desc: 'move forward', color: 'yellow', time: 100,
+		action: (cell_tile, target_tile) => {
+			if (target_tile === 'SPACE') return {
+				cell_tile: 'SPACE',
+				target_tile: cell_tile
+			};
+
+			return { cell_tile, target_tile };
+
+
+		}
+	},
+	3: {
+		name: 'SPLIT', desc: 'divide organism', time: 100,
+		action: (cell_tile, target_tile) => { cell_tile.q = 2; return { cell_tile, target_tile }; }
+	},
 	4: { name: 'ROT_R', desc: 'rotate right' },
 	5: { name: 'ROT_L', desc: 'rotate left' },
 	6: { name: 'HIT', desc: 'attack forward' },
@@ -80,7 +99,8 @@ function decodeInstruction(chunk) {
 		name: opInfo.name,
 		desc: opInfo.desc,
 		color: opInfo.color,
-		cost: opInfo.cost ?? 1,
+		cost: opInfo.cost ?? {},
+		action: opInfo.action ?? ((cell_tile, target_tile) => ({ cell_tile, target_tile })),
 		time: opInfo.time ?? 1
 	};
 }
@@ -139,7 +159,25 @@ export default class Cell {
 
 		this.meta = this.header.slice(6, 8); // 2 extra chars (reserved)
 
-		this.instructions = this.#decodeInstructions();
+		//this.instructions = this.#decodeInstructions();
+
+		this.q = 2;
+		this.age = 0;
+	}
+
+	static step(cell_tile, target_tile) {
+		cell_tile.age++;
+		let time = 10;
+		while (time > 0) {
+			const op = decodeInstruction(cell_tile.dna.slice(cell_tile.q++ * 4, cell_tile.q * 4));
+			if (!op) return { cell_tile, target_tile };
+			console.log(op.name)
+			time -= op.time;
+			const opr = op.action(cell_tile, target_tile);
+			cell_tile = opr.cell_tile;
+			target_tile = opr.target_tile;
+		}
+		return { cell_tile, target_tile };
 	}
 
 	// ---------- Static factory ----------

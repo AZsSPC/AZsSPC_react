@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
+import Cell from "./Cell"
 
-const HEX_SIZE = 2;
+const HEX_SIZE = 1.5;
 
 /* =========================
    GEOMETRY HELPERS
@@ -39,7 +40,7 @@ function axialToWorld(q, r) {
    COMPONENT
 ========================= */
 
-export default function HexWorld({ regenerateKey, petri, petri_size, time }) {
+export default function HexWorld({ petri, petri_size }) {
 
     const mountRef = useRef(null);
     const threeRef = useRef(null);
@@ -50,67 +51,73 @@ export default function HexWorld({ regenerateKey, petri, petri_size, time }) {
     const cellGeo = useMemo(() => createCellGeometry(), []);
 
     const tileMat = useMemo(
-        () => new THREE.MeshBasicMaterial({ vertexColors: true }),
+        () => new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
         []
     );
 
     const cellMat = useMemo(() => new THREE.ShaderMaterial({
 
         vertexShader: `
-            attribute vec3 instanceFrontColor;
-            attribute vec3 instanceBackColor;
-            attribute float instanceSize;
+			attribute vec3 instanceFrontColor;
+			attribute vec3 instanceBackColor;
+			attribute float instanceSize;
 
-            varying vec3 vFrontColor;
-            varying vec3 vBackColor;
-            varying float vScale;
-            varying vec2 vUv;
+			varying vec3 vFrontColor;
+			varying vec3 vBackColor;
+			varying float vScale;
+			varying vec2 vUv;
 
-            void main() {
-                vFrontColor = instanceFrontColor;
-                vBackColor = instanceBackColor;
-                vScale = mix(0.3, 1.0, instanceSize / 100.0);
-                vUv = uv;
+			void main() {
+				vFrontColor = instanceFrontColor;
+				vBackColor = instanceBackColor;
+				vScale = mix(0.3, 1.0, instanceSize / 100.0);
+				vUv = uv;
 
-                vec4 worldPosition = instanceMatrix * vec4(position, 1.0);
-                gl_Position = projectionMatrix * modelViewMatrix * worldPosition;
-            }`,
+				vec4 worldPosition = instanceMatrix * vec4(position, 1.0);
+				gl_Position = projectionMatrix * modelViewMatrix * worldPosition;
+			}`,
         fragmentShader: `
-            varying vec3 vFrontColor;
-            varying vec3 vBackColor;
-            varying float vScale;
-            varying vec2 vUv;
+			varying vec3 vFrontColor;
+			varying vec3 vBackColor;
+			varying float vScale;
+			varying vec2 vUv;
 
-            void main() {
-                vec2 centerEllipse = vec2(1.0, 0.5); 
-                vec2 centerCircle = vec2(0.5, 0.5);
+			void main() {
 
-                vec2 scaledUV = (vUv - centerEllipse) / vec2(1.5, 0.5);
+				vec2 centerEllipse = vec2(1.0, 0.5);
+				vec2 centerCircle = vec2(0.5, 0.5);
 
-                float distEllipse = length(scaledUV);
-                float distCircle = length(vUv - centerCircle);
+				vec2 scaledUV = (vUv - centerEllipse) / vec2(1.5, 0.5);
 
-                float fillT = smoothstep(0.5, 0.55, distEllipse);
-                vec3 col = mix(vFrontColor, vBackColor, fillT);
+				float distEllipse = length(scaledUV);
+				float distCircle = length(vUv - centerCircle);
 
-                vec3 outlineColor = (vFrontColor + vBackColor) * 0.7 + vec3(0.15);
+				float fillT = smoothstep(0.5, 0.55, distEllipse);
+				vec3 col = mix(vFrontColor, vBackColor, fillT);
 
-                float outlineCircle = smoothstep(0.42, 0.45, distCircle) - smoothstep(0.5, 1.0, distCircle);
-                float outlineEllipse = smoothstep(0.45, 0.5, distEllipse / vScale) - smoothstep(0.52, 0.55, distEllipse);
+				vec3 avg = (vFrontColor + vBackColor) * 0.5;
+				vec3 outlineColor = mix(avg, vec3(1.0), 0.3);
 
-                float outlineMask = max(outlineCircle, outlineEllipse);
+				float outlineCircle =
+					smoothstep(0.42, 0.45, distCircle) -
+					smoothstep(0.5, 1.0, distCircle);
 
-                col = mix(col, outlineColor, outlineMask);
+				float outlineEllipse =
+					smoothstep(0.45, 0.5, distEllipse / vScale) -
+					smoothstep(0.52, 0.55, distEllipse);
 
-                gl_FragColor = vec4(col, 1.0);
-            }`,
+				float outlineMask = max(outlineCircle, outlineEllipse);
 
+				col = mix(col, outlineColor, outlineMask);
+
+				gl_FragColor = vec4(col, 1.0);
+			}`,
         depthTest: true,
         depthWrite: true
     }), []);
 
     /* ==========================================================
-       EFFECT A — INITIALIZE THREE (RUNS ONCE)
+       EFFECT A — INITIALIZE THREE
     ========================================================== */
 
     useEffect(() => {
@@ -118,29 +125,42 @@ export default function HexWorld({ regenerateKey, petri, petri_size, time }) {
         const container = mountRef.current;
         if (!container) return;
 
-        const width = container.clientWidth || 800;
-        const height = container.clientHeight || 600;
-
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(width, height);
         container.appendChild(renderer.domElement);
 
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x2a2a2a);
 
-        const aspect = width / height;
         const viewSize = 60;
 
         const camera = new THREE.OrthographicCamera(
-            -viewSize * aspect,
-            viewSize * aspect,
-            viewSize,
-            -viewSize,
-            0.1,
-            100
+            -1, 1, 1, -1, 0.1, 100
         );
-
         camera.position.set(0, 0, 10);
+
+        /* ---------- resize logic (CORE FIX) ---------- */
+
+        function resize() {
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            renderer.setSize(width, height, false);
+
+            const aspect = width / height;
+
+            camera.left = -viewSize * aspect;
+            camera.right = viewSize * aspect;
+            camera.top = viewSize;
+            camera.bottom = -viewSize;
+
+            camera.updateProjectionMatrix();
+        }
+
+        const resizeObserver = new ResizeObserver(resize);
+        resizeObserver.observe(container);
+        resize();
+
+        /* ---------- meshes ---------- */
 
         const maxCount = petri_size.x * petri_size.y;
 
@@ -149,8 +169,6 @@ export default function HexWorld({ regenerateKey, petri, petri_size, time }) {
 
         scene.add(tiles);
         scene.add(cells);
-
-        /* Allocate instanced attributes ONCE */
 
         const frontColors =
             new THREE.InstancedBufferAttribute(new Float32Array(maxCount * 3), 3);
@@ -176,22 +194,26 @@ export default function HexWorld({ regenerateKey, petri, petri_size, time }) {
             scales
         };
 
+        /* ---------- render loop ---------- */
+
+        let raf;
         const animate = () => {
             renderer.render(scene, camera);
-            requestAnimationFrame(animate);
+            raf = requestAnimationFrame(animate);
         };
         animate();
 
         return () => {
+            cancelAnimationFrame(raf);
+            resizeObserver.disconnect();
             renderer.dispose();
             container.removeChild(renderer.domElement);
         };
 
     }, [cellGeo, cellMat, petri_size, tileGeo, tileMat]);
 
-
     /* ==========================================================
-       EFFECT B — UPDATE INSTANCE DATA (FAST PATH)
+       EFFECT B — UPDATE INSTANCE DATA
     ========================================================== */
 
     useEffect(() => {
@@ -208,7 +230,7 @@ export default function HexWorld({ regenerateKey, petri, petri_size, time }) {
         } = ctx;
 
         const dummy = new THREE.Object3D();
-        const color = new THREE.Color('#111');
+        // const color = new THREE.Color('#111');
 
         const totalWidth =
             HEX_SIZE * Math.sqrt(3) * (petri_size.y + 0.5);
@@ -230,23 +252,17 @@ export default function HexWorld({ regenerateKey, petri, petri_size, time }) {
                 const worldX = x - offsetX;
                 const worldY = y - offsetY;
 
-                /* tiles */
                 dummy.position.set(worldX, worldY, 0);
                 dummy.rotation.set(0, 0, 0);
                 dummy.updateMatrix();
 
+                tiles.setColorAt(index, new THREE.Color('#'+((q+r)%10+'').repeat(3)));
                 tiles.setMatrixAt(index, dummy.matrix);
-                tiles.setColorAt(index, color);
 
-                /* cells */
-                if (cell) {
+                if (cell instanceof Cell) {
 
                     dummy.position.set(worldX, worldY, 0.01);
-                    dummy.rotation.set(
-                        0,
-                        0,
-                        (cell.rotation + time) / 6 * Math.PI * 2
-                    );
+                    dummy.rotation.set(0, 0, cell.rotation / 3 * Math.PI);
 
                     dummy.updateMatrix();
                     cells.setMatrixAt(cellIndex, dummy.matrix);
@@ -274,9 +290,7 @@ export default function HexWorld({ regenerateKey, petri, petri_size, time }) {
         frontColors.needsUpdate = true;
         backColors.needsUpdate = true;
         scales.needsUpdate = true;
-
-    }, [petri, petri_size, time, regenerateKey]);
-
+    }, [petri, petri_size]);
 
     return (
         <div
