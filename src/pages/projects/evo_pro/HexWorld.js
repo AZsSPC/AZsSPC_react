@@ -74,7 +74,6 @@ float hash(vec2 p){
 }
 
 vec2 worldToAxial(vec2 world){
-
 	float shiftX = uHexSize * sqrt(3.0) * 0.5;
 	float shiftY = uHexSize * 0.75;
 
@@ -100,13 +99,10 @@ vec2 worldToAxial(vec2 world){
 
 void main(){
 	vec2 uv = gl_FragCoord.xy / uResolution;
-
 	vec2 span = vec2(uViewSize * uAspect * 2.0, uViewSize * 2.0);
-
 	vec2 world = (uv - 0.5) * span + uCameraPos + uOffset;
 
 	vec2 canvasMin = vec2(0) - uHexSize * 0.35;
-
 	vec2 canvasMax = uWorldSize + uHexSize * 0.35;
 
 	float color_add =
@@ -114,7 +110,7 @@ void main(){
 		 world.y <= canvasMin.y ||
 		 world.x >= canvasMax.x ||
 		 world.y >= canvasMax.y)
-		? 0.75 : 1.0;
+		? 0.7 : 1.0;
 
 	vec2 axial = worldToAxial(world);
 
@@ -216,9 +212,8 @@ void main(){
         const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 1000);
         camera.position.z = 10;
 
-        const totalWidth = hexScale * Math.sqrt(3) * (petri_size.y + 0.5);
-
-        const totalHeight = hexScale * 1.5 * petri_size.x;
+        const totalHeight = hexScale * 1.5 * petri_size.y;
+        const totalWidth = hexScale * Math.sqrt(3) * (petri_size.x + 0.5);
 
         const offsetX = totalWidth / 2;
         const offsetY = totalHeight / 2;
@@ -227,7 +222,6 @@ void main(){
         bgMat.uniforms.uWorldSize.value.set(totalWidth, totalHeight);
 
         function updateViewUniforms(width, height) {
-
             const aspect = width / height;
 
             camera.left = -baseViewSize * aspect;
@@ -238,9 +232,8 @@ void main(){
             camera.updateProjectionMatrix();
 
             bgMat.uniforms.uResolution.value.set(width, height);
-            bgMat.uniforms.uAspect.value = aspect;
+            bgMat.uniforms.uAspect.value = width / height;
 
-            // CRITICAL FIX:
             bgMat.uniforms.uViewSize.value = baseViewSize / camera.zoom;
         }
 
@@ -274,7 +267,7 @@ void main(){
         cells.geometry.setAttribute('instanceBackColor', backColors);
         cells.geometry.setAttribute('instanceSize', scales);
 
-        threeRef.current =            { renderer, scene, camera, cells, frontColors, backColors, scales };
+        threeRef.current = { renderer, scene, camera, cells, frontColors, backColors, scales };
 
         /* ---------- CAMERA ---------- */
 
@@ -344,9 +337,8 @@ void main(){
         const { cells, frontColors, backColors, scales } = ctx;
         const dummy = new THREE.Object3D();
 
-        const totalHeight = hexScale * 1.5 * petri_size.x;
-
-        const totalWidth = hexScale * Math.sqrt(3) * (petri_size.y + 0.5);
+        const totalHeight = hexScale * 1.5 * petri_size.y;
+        const totalWidth = hexScale * Math.sqrt(3) * (petri_size.x + 0.5);
 
         const offsetX = totalWidth / 2;
         const offsetY = totalHeight / 2;
@@ -359,7 +351,7 @@ void main(){
                 const cell = petri[q][r];
                 if (!(cell instanceof Cell)) continue;
 
-                const { x, y } = axialToWorld(q, r, hexScale);
+                const { x, y } = axialToWorld(r, q, hexScale);
 
                 dummy.position.set(x - offsetX, y - offsetY, 0.01);
 

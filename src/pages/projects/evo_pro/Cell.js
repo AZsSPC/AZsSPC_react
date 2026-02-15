@@ -2,7 +2,7 @@
 const HEADER_SIZE = 8;
 const ALPHABET = '0123456789abcdefghijklmnopqrstuv'.toUpperCase(); // base32
 const BASE = 32;
-const DEFAULT_DNA = 'gs5.5d2.00.1000.1000.2000.1000.1000.1000.2000.1000.1000.1g00'.toUpperCase().replaceAll('.', '');
+const DEFAULT_DNA = 'gs5.5d2.00.1000.1000.1000.1000.1g00'.toUpperCase().replaceAll('.', '');
 
 // 64-opcode instruction set
 const OPCODES = {
@@ -136,7 +136,7 @@ export default class Cell {
 	constructor(dna = DEFAULT_DNA, stat = {}) {
 		this.dna = dna.toUpperCase();
 		this.headerSize = HEADER_SIZE;
-		this.rotation = 0//Math.random() * 6 | 0;
+		this.rotation = Math.random() * 6 | 0;
 
 		this.stat = {
 			energy: 1,						// unlimited, energy<=0 means death
@@ -161,7 +161,7 @@ export default class Cell {
 		this.q = 2;
 		this.age = 0;
 	}
-	
+
 	static step(cell) {
 		cell.age++;
 

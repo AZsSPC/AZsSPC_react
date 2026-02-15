@@ -17,7 +17,7 @@ function DNAInterpreterInner() {
 	const [petri, setPetri] = useState(() =>
 		Array.from({ length: petri_size.x }, () =>
 			Array.from({ length: petri_size.y },
-				() => Math.random() < 0.1 ?  new Cell() : "SPACE"
+				() => Math.random() < 0.1 ? Cell.random() : "SPACE"
 			)
 		)
 	);
@@ -31,15 +31,15 @@ function DNAInterpreterInner() {
 
 	const getNeighbor = useCallback((q, r, dir) => {
 
-		const even = q % 2 === 0;
+		const even = r % 2 === 0;
 
 		switch (dir) {
-			case 0: return [q, r + 1];
-			case 1: return [q + 1, r + (even ? 0 : 1)];
-			case 2: return [q + 1, r + (even ? -1 : 0)];
-			case 3: return [q, r - 1];
-			case 4: return [q - 1, r + (even ? -1 : 0)];
-			case 5: return [q - 1, r + (even ? 0 : 1)];
+			case 0: return [q + 1, r];
+			case 1: return [q + (even ? 0 : 1), r + 1];
+			case 2: return [q + (even ? -1 : 0), r + 1];
+			case 3: return [q - 1, r];
+			case 4: return [q + (even ? -1 : 0), r - 1];
+			case 5: return [q + (even ? 0 : 1), r - 1];
 			default: return [q, r];
 		}
 
@@ -141,7 +141,7 @@ function DNAInterpreterInner() {
 			{ length: petri_size.x },
 			() => Array.from(
 				{ length: petri_size.y },
-				() => Math.random() < 0.05 ? new Cell() : "SPACE"
+				() => Math.random() < 0.05 ? Cell.random() : "SPACE"
 			)
 		);
 
