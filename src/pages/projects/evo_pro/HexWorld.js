@@ -220,9 +220,45 @@ void main(){
         if (!container) return;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.domElement.style.touchAction = 'pan-x pinch-zoom';
+// Inside useEffect, right after creating renderer:
+
+renderer.domElement.style.touchAction = 'pinch-zoom';
+
+// Remove these lines completely:
+// container.style.touchAction = 'none';
+// container.addEventListener('touchmove', … {passive:false})   ← the old one
+
+// Replace your zoom logic with this clean version:
+let lastPinchDistance = -1;
+
+container.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const [t1, t2] = e.touches;
+    lastPinchDistance = Math.hypot(
+      t1.clientX - t2.clientX,
+      t1.clientY - t2.clientY
+    );
+  }
+}, { passive: false });
+
 container.addEventListener('touchmove', e => {
-  if (e.touches.length === 2) e.preventDefault();
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const [t1, t2] = e.touches;
+    const dist = Math.hypot(
+      t1.clientX - t2.clientX,
+      t1.clientY - t2.clientY
+    );
+
+    if (lastPinchDistance > 0) {
+      const factor = dist / lastPinchDistance;
+      camera.zoom = THREE.MathUtils.clamp(camera.zoom * factor, 0.2, 5);
+      camera.updateProjectionMatrix();
+      bgMat.uniforms.uViewSize.value = baseViewSize / camera.zoom;
+    }
+    lastPinchDistance = dist;
+  }
 }, { passive: false });
 
         container.appendChild(renderer.domElement);
