@@ -220,8 +220,17 @@ void main(){
         if (!container) return;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.domElement.style.touchAction = 'pinch-zoom';
+renderer.domElement.style.touchAction = 'pan-x pinch-zoom';
+renderer.domElement.style.touchAction = 'none';
+container.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) e.preventDefault();
+}, { passive: false });
+
         container.appendChild(renderer.domElement);
-container.style.touchAction = 'none';
+
+        container.style.touchAction = 'none';
+
         const scene = new THREE.Scene();
 
         const baseViewSize = 60;
