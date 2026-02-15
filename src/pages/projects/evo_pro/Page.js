@@ -12,7 +12,7 @@ function DNAInterpreterInner() {
 
 	const speedRef = useRef(null);
 
-	const petri_size = useMemo(() => ({ x: 80, y: 50 }), []);
+	const petri_size = useMemo(() => ({ x: 200, y: 200 }), []);
 
 	const [petri, setPetri] = useState(() =>
 		Array.from({ length: petri_size.x }, () =>

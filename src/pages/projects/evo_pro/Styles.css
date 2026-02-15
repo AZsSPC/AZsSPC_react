@@ -1,0 +1,4 @@
+#petri{
+    width: 100%;
+    height: calc(100dvh - 128px);
+}

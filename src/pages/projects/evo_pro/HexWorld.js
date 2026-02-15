@@ -73,46 +73,63 @@ float hash(vec2 p){
 	return fract(p.x*p.y);
 }
 
+vec2 axialToWorld(vec2 axial) {
+    float q = axial.x;
+    float r = axial.y;
+    float shiftX = uHexSize * sqrt(3.0) * 0.5;
+    float shiftY = uHexSize * 0.75;
+    float x = (sqrt(3.0) * r + sqrt(3.0)/2.0 * q) * uHexSize + shiftX;
+    float y = (3.0/2.0 * q) * uHexSize + shiftY;
+    return vec2(x, y);
+}
+
 vec2 worldToAxial(vec2 world){
-	float shiftX = uHexSize * sqrt(3.0) * 0.5;
-	float shiftY = uHexSize * 0.75;
+    float shiftX = uHexSize * sqrt(3.0) * 0.5;
+    float shiftY = uHexSize * 0.75;
 
-	vec2 ws = world - vec2(shiftX, shiftY);
+    vec2 ws = world - vec2(shiftX, shiftY);
 
-	float qStd = (sqrt(3.0)/3.0 * ws.x - 1.0/3.0 * ws.y) / uHexSize;
-	float rStd = (2.0/3.0 * ws.y) / uHexSize;
-	float sStd = -qStd - rStd;
+    float qStd = (sqrt(3.0)/3.0 * ws.x - 1.0/3.0 * ws.y) / uHexSize;
+    float rStd = (2.0/3.0 * ws.y) / uHexSize;
+    float sStd = -qStd - rStd;
 
-	float q = round(qStd);
-	float r = round(rStd);
-	float s = round(sStd);
+    float q = round(qStd);
+    float r = round(rStd);
+    float s = round(sStd);
 
-	float qd = abs(qStd - q);
-	float rd = abs(rStd - r);
-	float sd = abs(sStd - s);
+    float qd = abs(qStd - q);
+    float rd = abs(rStd - r);
+    float sd = abs(sStd - s);
 
-	if (qd > rd && qd > sd) q = -r - s;
-	else if (rd > sd) r = -q - s;
+    if (qd > rd && qd > sd) q = -r - s;
+    else if (rd > sd) r = -q - s;
 
-	return vec2(r, q);
+    return vec2(r, q);
 }
 
 void main(){
 	vec2 uv = gl_FragCoord.xy / uResolution;
+
 	vec2 span = vec2(uViewSize * uAspect * 2.0, uViewSize * 2.0);
 	vec2 world = (uv - 0.5) * span + uCameraPos + uOffset;
 
 	vec2 canvasMin = vec2(0) - uHexSize * 0.35;
 	vec2 canvasMax = uWorldSize + uHexSize * 0.35;
 
-	float color_add =
-		(world.x <= canvasMin.x ||
-		 world.y <= canvasMin.y ||
-		 world.x >= canvasMax.x ||
-		 world.y >= canvasMax.y)
-		? 0.7 : 1.0;
+    vec2 axial = worldToAxial(world);
+    vec2 center = axialToWorld(axial);
 
-	vec2 axial = worldToAxial(world);
+	float color_add =
+		(center.x > canvasMin.x + 1.0 &&
+		 center.y > canvasMin.y &&
+		 center.x < canvasMax.x - 1.0 &&
+		 center.y < canvasMax.y)
+        ? 0.75 : 
+        (center.x < canvasMin.x - 1.0 ||
+		 center.y < canvasMin.y - 1.0 ||
+		 center.x > canvasMax.x + 1.0 ||
+		 center.y > canvasMax.y + 1.0)
+        ? 1.0 : 1.45;
 
 	float n = hash(axial) * 0.25 + 1.0;
 	vec3 baseColor = uColor * (n * color_add);
@@ -204,7 +221,7 @@ void main(){
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         container.appendChild(renderer.domElement);
-
+container.style.touchAction = 'none';
         const scene = new THREE.Scene();
 
         const baseViewSize = 60;
@@ -379,5 +396,5 @@ void main(){
 
     }, [petri, petri_size, hexScale]);
 
-    return <div ref={mountRef} style={{ width: '100%', height: '85dvh' }} />;
+    return <div id='petri' ref={mountRef} />;
 }
