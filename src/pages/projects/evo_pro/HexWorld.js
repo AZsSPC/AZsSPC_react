@@ -120,15 +120,15 @@ void main(){
     vec2 center = axialToWorld(axial);
 
 	float color_add =
-		(center.x > canvasMin.x + 1.0 &&
+		(center.x > canvasMin.x + 2.0 &&
 		 center.y > canvasMin.y &&
-		 center.x < canvasMax.x - 1.0 &&
+		 center.x < canvasMax.x - 2.0 &&
 		 center.y < canvasMax.y)
         ? 0.75 : 
-        (center.x < canvasMin.x - 1.0 ||
-		 center.y < canvasMin.y - 1.0 ||
-		 center.x > canvasMax.x + 1.0 ||
-		 center.y > canvasMax.y + 1.0)
+        (center.x < canvasMin.x - 3.0 ||
+		 center.y < canvasMin.y - 3.0 ||
+		 center.x > canvasMax.x + 3.0 ||
+		 center.y > canvasMax.y + 3.0)
         ? 1.0 : 1.45;
 
 	float n = hash(axial) * 0.25 + 1.0;
