@@ -7,77 +7,145 @@ import AZInstrumentsPanel, { AZInstrumentsSubpanel } from '../../../components/e
 import AZInputRange from '../../../components/elements/AZInputRange';
 import RuntimeProvider, { useRuntime } from '../../../providers/RuntimeProvider';
 import './Styles.css';
-
 function DNAInterpreterInner() {
-	// const iwRef = useRef(null); // size input
-	// const ibRef = useRef(null); // brain cells input
-	// const foodRef = useRef(null);
+
 	const speedRef = useRef(null);
-	const runtimeTimeoutRef = useRef(100);
 
 	const petri_size = useMemo(() => ({ x: 50, y: 50 }), []);
-	const [petri, setPetri] = useState(() => Array.from(
-		{ length: petri_size.x },
-		() => Array.from(
-			{ length: petri_size.y },
-			() => Math.random() < 0.1 ? new Cell() : "SPACE"
+
+	const [petri, setPetri] = useState(() =>
+		Array.from({ length: petri_size.x }, () =>
+			Array.from({ length: petri_size.y },
+				() => Math.random() < 0.1 ? new Cell() : "SPACE"
+			)
 		)
-	));
+	);
+
+	const petriRef = useRef(petri);
+
+	useEffect(() => { petriRef.current = petri; }, [petri]);
+
+
+	// ===== HEX NEIGHBOR =====
 
 	const getNeighbor = useCallback((q, r, dir) => {
+
 		const even = q % 2 === 0;
 
 		switch (dir) {
-			case 0: return [q, r + 1];              		// right
-			case 1: return [q + 1, r + (even ? 0 : 1)]; 	// up-right
-			case 2: return [q + 1, r + (even ? -1 : 0)];	// up-left
-			case 3: return [q, r - 1];              		// left
-			case 4: return [q - 1, r + (even ? -1 : 0)];	// down-left
-			case 5: return [q - 1, r + (even ? 0 : 1)]; 	// down-right
+			case 0: return [q, r + 1];
+			case 1: return [q + 1, r + (even ? 0 : 1)];
+			case 2: return [q + 1, r + (even ? -1 : 0)];
+			case 3: return [q, r - 1];
+			case 4: return [q - 1, r + (even ? -1 : 0)];
+			case 5: return [q - 1, r + (even ? 0 : 1)];
 			default: return [q, r];
 		}
-	}, [])
+
+	}, []);
 
 
+	// ================= CYCLE =================
 	const cycle = useCallback(() => {
-		const shadow_petri = Array.from({ length: petri_size.x }, () => Array.from({ length: petri_size.y }, () => "SPACE"));
 
-		for (let i = 0; i < petri_size.x; i++) for (let j = 0; j < petri_size.y; j++) {
-			const cell = petri[i][j];
+		const petri = petriRef.current;
 
-			if (!(cell instanceof Cell))
-				continue;
+		/* ---------- Phase A ---------- */
 
-			let [x, y] = getNeighbor(i, j, cell.rotation)
+		const intents = [];
 
-			const is_in_range = x >= 0 && y >= 0 && x < petri_size.x && y < petri_size.y;
-			const target = is_in_range ? petri[x][y] : "WALL";
+		for (let x = 0; x < petri_size.x; x++) for (let y = 0; y < petri_size.y; y++) {
+			const cell = petri[x][y];
+			if (!(cell instanceof Cell)) continue;
 
-			const { cell_tile, target_tile } = Cell.step(cell, target);
+			const { intent } = Cell.step(cell);
 
-			shadow_petri[i][j] = cell_tile;
+			if (intent?.type === 'MOVE') {
 
-			if (is_in_range)
-				shadow_petri[x][y] = target_tile;
+				const [nx, ny] = getNeighbor(x, y, cell.rotation);
+
+				if (nx >= 0 && ny >= 0 && nx < petri_size.x && ny < petri_size.y) {
+					intents.push({ cell, from: [x, y], to: [nx, ny] });
+				}
+			}
 		}
 
-		setPetri(shadow_petri);
+		/* ---------- Phase B ---------- */
+
+		const targets = new Map();
+
+		for (const intent of intents) {
+			const key = intent.to.join(',');
+			if (!targets.has(key)) targets.set(key, []);
+			targets.get(key).push(intent);
+		}
+
+		const approved = [];
+
+		for (const list of targets.values()) {
+			const winner = list.reduce((best, candidate) => {
+				if (!best) return candidate;
+
+				const a = candidate.cell.stat;
+				const b = best.cell.stat;
+
+				// energy priority
+				if (a.energy > b.energy) return candidate;
+				if (a.energy < b.energy) return best;
+
+				// mass priority
+				if (a.mass > b.mass) return candidate;
+				if (a.mass < b.mass) return best;
+
+				// tie-break (important!)
+				return Math.random() < 0.5 ? candidate : best;
+			}, null);
+
+			approved.push(winner);
+		}
+
+		/* ---------- Phase C ---------- */
+
+		const next = petri.map(col => [...col]);
+
+		for (const move of approved) {
+
+			const [fx, fy] = move.from;
+			const [tx, ty] = move.to;
+
+			if (next[tx][ty] instanceof Cell) continue;
+
+			next[fx][fy] = "SPACE";
+			next[tx][ty] = move.cell;
+		}
+
+		petriRef.current = next;
+		setPetri(next);
+
 		return true;
-	}, [petri, petri_size, getNeighbor])
+
+	}, [petri_size, getNeighbor]);
+
 
 	const { registerRunner, timeout, setTimeout } = useRuntime();
+	const runtimeTimeoutRef = useRef(100);
 	useEffect(() => { registerRunner(cycle); }, [registerRunner, cycle]);
 	useEffect(() => { runtimeTimeoutRef.current = timeout; }, [timeout]);
 	// useEffect(() => { if (!running) { draw(true); } }, [running]);
 
+
 	function generate() {
-		setPetri(Array.from(
+
+		const world = Array.from(
 			{ length: petri_size.x },
 			() => Array.from(
 				{ length: petri_size.y },
 				() => Math.random() < 0.05 ? new Cell() : "SPACE"
 			)
-		));
+		);
+
+		petriRef.current = world;
+		setPetri(world);
 	}
 
 	return (
@@ -122,6 +190,7 @@ function DNAInterpreterInner() {
 		</>
 	);
 }
+
 
 export default function DNAInterpreter() {
 	return (
