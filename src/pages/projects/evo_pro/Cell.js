@@ -136,7 +136,7 @@ export default class Cell {
 	constructor(dna = DEFAULT_DNA, stat = {}) {
 		this.dna = dna.toUpperCase();
 		this.headerSize = HEADER_SIZE;
-		this.rotation = Math.random() * 6 | 0;
+		this.rotation = 0//Math.random() * 6 | 0;
 
 		this.stat = {
 			energy: 1,						// unlimited, energy<=0 means death

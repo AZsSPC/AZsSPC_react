@@ -12,12 +12,12 @@ function DNAInterpreterInner() {
 
 	const speedRef = useRef(null);
 
-	const petri_size = useMemo(() => ({ x: 50, y: 50 }), []);
+	const petri_size = useMemo(() => ({ x: 80, y: 50 }), []);
 
 	const [petri, setPetri] = useState(() =>
 		Array.from({ length: petri_size.x }, () =>
 			Array.from({ length: petri_size.y },
-				() => Math.random() < 0.1 ? Cell.random() : "SPACE"
+				() => Math.random() < 0.1 ?  new Cell() : "SPACE"
 			)
 		)
 	);
@@ -141,7 +141,7 @@ function DNAInterpreterInner() {
 			{ length: petri_size.x },
 			() => Array.from(
 				{ length: petri_size.y },
-				() => Math.random() < 0.05 ? Cell.random() : "SPACE"
+				() => Math.random() < 0.05 ? new Cell() : "SPACE"
 			)
 		);
 
