@@ -1,38 +1,20 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import Cell from "./Cell"
-
-const HEX_SIZE = 1.5;
+import Cell from './Cell';
 
 /* =========================
    GEOMETRY HELPERS
 ========================= */
 
-function createHexGeometry(radius = HEX_SIZE) {
-    const shape = new THREE.Shape();
-
-    for (let i = 0; i < 6; i++) {
-        const angle = Math.PI / 3 * i + Math.PI / 2;
-        const x = radius * Math.cos(angle);
-        const y = radius * Math.sin(angle);
-
-        if (i === 0) shape.moveTo(x, y);
-        else shape.lineTo(x, y);
-    }
-
-    shape.closePath();
-    return new THREE.ShapeGeometry(shape);
-}
-
-function createCellGeometry() {
-    return new THREE.CircleGeometry(HEX_SIZE * 0.75, 16);
+function createCellGeometry(scale) {
+    return new THREE.CircleGeometry(scale * 0.8, 16);
 }
 
 // odd-q vertical layout
-function axialToWorld(q, r) {
+function axialToWorld(q, r, scale) {
     return {
-        x: HEX_SIZE * Math.sqrt(3) * (r + (q & 1) / 2 + 0.5),
-        y: HEX_SIZE * 1.5 * (q + 0.5)
+        x: scale * Math.sqrt(3) * (r + (q & 1) / 2 + 0.5),
+        y: scale * 1.5 * (q + 0.5)
     };
 }
 
@@ -40,84 +22,195 @@ function axialToWorld(q, r) {
    COMPONENT
 ========================= */
 
-export default function HexWorld({ petri, petri_size }) {
+export default function HexWorld({ petri, petri_size, hexScale = 1.5 }) {
 
     const mountRef = useRef(null);
     const threeRef = useRef(null);
 
     /* ---------- Stable GPU resources ---------- */
 
-    const tileGeo = useMemo(() => createHexGeometry(), []);
-    const cellGeo = useMemo(() => createCellGeometry(), []);
+    const cellGeo = useMemo(() => createCellGeometry(hexScale), [hexScale]);
 
-    const tileMat = useMemo(
-        () => new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
-        []
-    );
+    const bgGeo = useMemo(() => new THREE.PlaneGeometry(2, 2), []);
+
+    /* =========================
+       BACKGROUND MATERIAL
+    ========================= */
+
+    const bgMat = useMemo(() => new THREE.ShaderMaterial({
+
+        depthTest: false,
+        depthWrite: false,
+
+        uniforms: {
+            uResolution: { value: new THREE.Vector2() },
+            uCameraPos: { value: new THREE.Vector2() },
+            uViewSize: { value: 60.0 },
+            uAspect: { value: 1.0 },
+            uHexSize: { value: hexScale },
+            uColor: { value: new THREE.Color('#7a719e') },
+            uOffset: { value: new THREE.Vector2() },
+            uWorldSize: { value: new THREE.Vector2() }
+        },
+
+        vertexShader: `
+void main() {
+	gl_Position = vec4(position.xy,0.0,1.0);
+}`,
+
+        fragmentShader: `
+uniform vec2 uWorldSize;
+uniform vec2 uResolution;
+uniform vec2 uCameraPos;
+uniform float uViewSize;
+uniform float uAspect;
+uniform float uHexSize;
+uniform vec3 uColor;
+uniform float uVariation;
+uniform vec2 uOffset;
+uniform float uZoom;
+
+float hash(vec2 p){
+	p = fract(p * vec2(123.34,456.21));
+	p += dot(p,p+45.32);
+	return fract(p.x*p.y);
+}
+
+vec2 worldToAxial(vec2 world){
+
+	float shiftX = uHexSize * sqrt(3.0) * 0.5;
+	float shiftY = uHexSize * 0.75;
+
+	vec2 ws = world - vec2(shiftX, shiftY);
+
+	float qStd = (sqrt(3.0)/3.0 * ws.x - 1.0/3.0 * ws.y) / uHexSize;
+	float rStd = (2.0/3.0 * ws.y) / uHexSize;
+	float sStd = -qStd - rStd;
+
+	float q = round(qStd);
+	float r = round(rStd);
+	float s = round(sStd);
+
+	float qd = abs(qStd - q);
+	float rd = abs(rStd - r);
+	float sd = abs(sStd - s);
+
+	if (qd > rd && qd > sd) q = -r - s;
+	else if (rd > sd) r = -q - s;
+
+	return vec2(r, q);
+}
+
+void main(){
+
+	vec2 uv = gl_FragCoord.xy / uResolution;
+
+	vec2 span = vec2(
+		uViewSize * uAspect * 2.0,
+		uViewSize * 2.0
+	);
+
+	vec2 world =
+		(uv - 0.5) * span
+		+ uCameraPos
+		+ uOffset;
+
+	vec2 canvasMin = vec2(0) - uHexSize * 0.35;
+
+	vec2 canvasMax = uWorldSize + uHexSize * 0.35;
+
+	float color_add =
+		(world.x <= canvasMin.x ||
+		 world.y <= canvasMin.y ||
+		 world.x >= canvasMax.x ||
+		 world.y >= canvasMax.y)
+		? 0.75 : 1.0;
+
+	vec2 axial = worldToAxial(world);
+
+	float n = hash(axial) * 0.25 + 1.0;
+	vec3 baseColor = uColor * (n * color_add);
+
+	gl_FragColor = vec4(baseColor,1.0);
+}
+
+`
+    }), [hexScale]);
+
+    /* =========================
+       CELL MATERIAL
+    ========================= */
 
     const cellMat = useMemo(() => new THREE.ShaderMaterial({
 
-        vertexShader: `
-			attribute vec3 instanceFrontColor;
-			attribute vec3 instanceBackColor;
-			attribute float instanceSize;
-
-			varying vec3 vFrontColor;
-			varying vec3 vBackColor;
-			varying float vScale;
-			varying vec2 vUv;
-
-			void main() {
-				vFrontColor = instanceFrontColor;
-				vBackColor = instanceBackColor;
-				vScale = mix(0.3, 1.0, instanceSize / 100.0);
-				vUv = uv;
-
-				vec4 worldPosition = instanceMatrix * vec4(position, 1.0);
-				gl_Position = projectionMatrix * modelViewMatrix * worldPosition;
-			}`,
-        fragmentShader: `
-			varying vec3 vFrontColor;
-			varying vec3 vBackColor;
-			varying float vScale;
-			varying vec2 vUv;
-
-			void main() {
-
-				vec2 centerEllipse = vec2(1.0, 0.5);
-				vec2 centerCircle = vec2(0.5, 0.5);
-
-				vec2 scaledUV = (vUv - centerEllipse) / vec2(1.5, 0.5);
-
-				float distEllipse = length(scaledUV);
-				float distCircle = length(vUv - centerCircle);
-
-				float fillT = smoothstep(0.5, 0.55, distEllipse);
-				vec3 col = mix(vFrontColor, vBackColor, fillT);
-
-				vec3 avg = (vFrontColor + vBackColor) * 0.5;
-				vec3 outlineColor = mix(avg, vec3(1.0), 0.3);
-
-				float outlineCircle =
-					smoothstep(0.42, 0.45, distCircle) -
-					smoothstep(0.5, 1.0, distCircle);
-
-				float outlineEllipse =
-					smoothstep(0.45, 0.5, distEllipse / vScale) -
-					smoothstep(0.52, 0.55, distEllipse);
-
-				float outlineMask = max(outlineCircle, outlineEllipse);
-
-				col = mix(col, outlineColor, outlineMask);
-
-				gl_FragColor = vec4(col, 1.0);
-			}`,
         depthTest: true,
-        depthWrite: true
+        depthWrite: true,
+
+        vertexShader: `
+attribute vec3 instanceFrontColor;
+attribute vec3 instanceBackColor;
+attribute float instanceSize;
+
+varying vec3 vFrontColor;
+varying vec3 vBackColor;
+varying float vScale;
+varying vec2 vUv;
+
+void main(){
+
+	vFrontColor = instanceFrontColor;
+	vBackColor  = instanceBackColor;
+	vScale = mix(0.3,1.0,instanceSize/100.0);
+	vUv = uv;
+
+	vec4 worldPosition = instanceMatrix * vec4(position,1.0);
+	gl_Position = projectionMatrix * modelViewMatrix * worldPosition;
+}`,
+
+        fragmentShader: `
+varying vec3 vFrontColor;
+varying vec3 vBackColor;
+varying float vScale;
+varying vec2 vUv;
+
+void main(){
+
+	vec2 centerEllipse=vec2(1.0,0.5);
+	vec2 centerCircle =vec2(0.5);
+
+	vec2 scaledUV=(vUv-centerEllipse)/vec2(1.5,0.5);
+
+	float distEllipse=length(scaledUV);
+	float distCircle =length(vUv-centerCircle);
+
+	float fillT=smoothstep(0.5,0.55,distEllipse);
+	vec3 col=mix(vFrontColor,vBackColor,fillT);
+
+	vec3 avg=(vFrontColor+vBackColor)*0.5;
+
+	float minComp=min(min(avg.r,avg.g),avg.b);
+	vec3 outlineColor=avg;
+
+	if(avg.r==minComp) outlineColor.r=min(avg.r+0.3,1.0);
+	else if(avg.g==minComp) outlineColor.g=min(avg.g+0.3,1.0);
+	else outlineColor.b=min(avg.b+0.3,1.0);
+
+	float outlineCircle=
+		smoothstep(0.42,0.45,distCircle)
+		- smoothstep(0.5,1.0,distCircle);
+
+	float outlineEllipse=
+		smoothstep(0.45,0.5,distEllipse/vScale)
+		- smoothstep(0.52,0.55,distEllipse);
+
+	col=mix(col,outlineColor,max(outlineCircle,outlineEllipse));
+
+	gl_FragColor=vec4(col,1.0);
+}`
     }), []);
 
     /* ==========================================================
-       EFFECT A — INITIALIZE THREE
+       THREE INITIALIZATION
     ========================================================== */
 
     useEffect(() => {
@@ -129,72 +222,111 @@ export default function HexWorld({ petri, petri_size }) {
         container.appendChild(renderer.domElement);
 
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x2a2a2a);
 
-        const viewSize = 60;
+        const baseViewSize = 60;
 
-        const camera = new THREE.OrthographicCamera(
-            -1, 1, 1, -1, 0.1, 100
-        );
-        camera.position.set(0, 0, 10);
+        const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
+        camera.position.z = 10;
 
-        /* ---------- resize logic (CORE FIX) ---------- */
+        const totalWidth = hexScale * Math.sqrt(3) * (petri_size.y + 0.5);
 
-        function resize() {
-            const width = container.clientWidth;
-            const height = container.clientHeight;
+        const totalHeight = hexScale * 1.5 * petri_size.x;
 
-            renderer.setSize(width, height, false);
+        const offsetX = totalWidth / 2;
+        const offsetY = totalHeight / 2;
+
+        bgMat.uniforms.uOffset.value.set(offsetX, offsetY);
+        bgMat.uniforms.uWorldSize.value.set(totalWidth, totalHeight);
+
+        function updateViewUniforms(width, height) {
 
             const aspect = width / height;
 
-            camera.left = -viewSize * aspect;
-            camera.right = viewSize * aspect;
-            camera.top = viewSize;
-            camera.bottom = -viewSize;
+            camera.left = -baseViewSize * aspect;
+            camera.right = baseViewSize * aspect;
+            camera.top = baseViewSize;
+            camera.bottom = -baseViewSize;
 
             camera.updateProjectionMatrix();
+
+            bgMat.uniforms.uResolution.value.set(width, height);
+            bgMat.uniforms.uAspect.value = aspect;
+
+            // CRITICAL FIX:
+            bgMat.uniforms.uViewSize.value = baseViewSize / camera.zoom;
         }
 
-        const resizeObserver = new ResizeObserver(resize);
-        resizeObserver.observe(container);
-        resize();
+        function resize() {
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            renderer.setSize(w, h, false);
+            updateViewUniforms(w, h);
+        }
 
-        /* ---------- meshes ---------- */
+        new ResizeObserver(resize).observe(container);
+        resize();
 
         const maxCount = petri_size.x * petri_size.y;
 
-        const tiles = new THREE.InstancedMesh(tileGeo, tileMat, maxCount);
         const cells = new THREE.InstancedMesh(cellGeo, cellMat, maxCount);
 
-        scene.add(tiles);
+        const bg = new THREE.Mesh(bgGeo, bgMat);
+        bg.position.z = -1;
+
+        scene.add(bg);
         scene.add(cells);
 
-        const frontColors =
-            new THREE.InstancedBufferAttribute(new Float32Array(maxCount * 3), 3);
-
-        const backColors =
-            new THREE.InstancedBufferAttribute(new Float32Array(maxCount * 3), 3);
-
-        const scales =
-            new THREE.InstancedBufferAttribute(new Float32Array(maxCount), 1);
+        const frontColors = new THREE.InstancedBufferAttribute(new Float32Array(maxCount * 3), 3);
+        const backColors = new THREE.InstancedBufferAttribute(new Float32Array(maxCount * 3), 3);
+        const scales = new THREE.InstancedBufferAttribute(new Float32Array(maxCount), 1);
 
         cells.geometry.setAttribute('instanceFrontColor', frontColors);
         cells.geometry.setAttribute('instanceBackColor', backColors);
         cells.geometry.setAttribute('instanceSize', scales);
 
-        threeRef.current = {
-            renderer,
-            scene,
-            camera,
-            tiles,
-            cells,
-            frontColors,
-            backColors,
-            scales
+        threeRef.current =
+            { renderer, scene, camera, cells, frontColors, backColors, scales };
+
+        /* ---------- CAMERA ---------- */
+
+        let dragging = false;
+        const dragStart = new THREE.Vector2();
+        const camStart = new THREE.Vector3();
+
+        container.onpointerdown = e => {
+            dragging = true;
+            dragStart.set(e.clientX, e.clientY);
+            camStart.copy(camera.position);
         };
 
-        /* ---------- render loop ---------- */
+        container.onpointermove = e => {
+            if (!dragging) return;
+
+            const dx = (e.clientX - dragStart.x) / container.clientWidth;
+            const dy = (e.clientY - dragStart.y) / container.clientHeight;
+
+            const worldW = camera.right - camera.left;
+            const worldH = camera.top - camera.bottom;
+
+            camera.position.x = camStart.x - dx * worldW / camera.zoom;
+            camera.position.y = camStart.y + dy * worldH / camera.zoom;
+
+            bgMat.uniforms.uCameraPos.value.set(camera.position.x, camera.position.y);
+        };
+
+        window.onpointerup = () => dragging = false;
+
+        container.onwheel = e => {
+            e.preventDefault();
+
+            camera.zoom = THREE.MathUtils.clamp(camera.zoom / (1 + e.deltaY * 0.001), 0.2, 5);
+
+            camera.updateProjectionMatrix();
+
+            bgMat.uniforms.uViewSize.value = baseViewSize / camera.zoom;
+        };
+
+        /* ---------- RENDER LOOP ---------- */
 
         let raf;
         const animate = () => {
@@ -205,15 +337,14 @@ export default function HexWorld({ petri, petri_size }) {
 
         return () => {
             cancelAnimationFrame(raf);
-            resizeObserver.disconnect();
             renderer.dispose();
             container.removeChild(renderer.domElement);
         };
 
-    }, [cellGeo, cellMat, petri_size, tileGeo, tileMat]);
+    }, [cellGeo, cellMat, bgGeo, bgMat, petri_size, hexScale]);
 
     /* ==========================================================
-       EFFECT B — UPDATE INSTANCE DATA
+       INSTANCE UPDATE
     ========================================================== */
 
     useEffect(() => {
@@ -221,81 +352,52 @@ export default function HexWorld({ petri, petri_size }) {
         const ctx = threeRef.current;
         if (!ctx) return;
 
-        const {
-            tiles,
-            cells,
-            frontColors,
-            backColors,
-            scales
-        } = ctx;
-
+        const { cells, frontColors, backColors, scales } = ctx;
         const dummy = new THREE.Object3D();
-        // const color = new THREE.Color('#111');
 
-        const totalWidth =
-            HEX_SIZE * Math.sqrt(3) * (petri_size.y + 0.5);
-        const totalHeight =
-            HEX_SIZE * 1.5 * petri_size.x;
+        const totalWidth = hexScale * Math.sqrt(3) * (petri_size.y + 0.5);
+
+        const totalHeight = hexScale * 1.5 * petri_size.x;
 
         const offsetX = totalWidth / 2;
         const offsetY = totalHeight / 2;
 
         let index = 0;
-        let cellIndex = 0;
 
         for (let q = 0; q < petri_size.x; q++) {
             for (let r = 0; r < petri_size.y; r++) {
 
                 const cell = petri[q][r];
-                const { x, y } = axialToWorld(q, r);
+                if (!(cell instanceof Cell)) continue;
 
-                const worldX = x - offsetX;
-                const worldY = y - offsetY;
+                const { x, y } = axialToWorld(q, r, hexScale);
 
-                dummy.position.set(worldX, worldY, 0);
-                dummy.rotation.set(0, 0, 0);
+                dummy.position.set(x - offsetX, y - offsetY, 0.01);
+
+                dummy.rotation.z =
+                    cell.rotation / 3 * Math.PI;
+
                 dummy.updateMatrix();
+                cells.setMatrixAt(index, dummy.matrix);
 
-                tiles.setColorAt(index, new THREE.Color('#'+((q+r)%10+'').repeat(3)));
-                tiles.setMatrixAt(index, dummy.matrix);
+                const f = new THREE.Color(cell.getFrontColorCSS());
+                const b = new THREE.Color(cell.getBackColorCSS());
 
-                if (cell instanceof Cell) {
-
-                    dummy.position.set(worldX, worldY, 0.01);
-                    dummy.rotation.set(0, 0, cell.rotation / 3 * Math.PI);
-
-                    dummy.updateMatrix();
-                    cells.setMatrixAt(cellIndex, dummy.matrix);
-
-                    const front = new THREE.Color(cell.getFrontColorCSS());
-                    const back = new THREE.Color(cell.getBackColorCSS());
-
-                    frontColors.setXYZ(cellIndex, front.r, front.g, front.b);
-                    backColors.setXYZ(cellIndex, back.r, back.g, back.b);
-                    scales.setX(cellIndex, cell.stat.mass | 0);
-
-                    cellIndex++;
-                }
+                frontColors.setXYZ(index, f.r, f.g, f.b);
+                backColors.setXYZ(index, b.r, b.g, b.b);
+                scales.setX(index, cell.stat.mass | 0);
 
                 index++;
             }
         }
 
-        cells.count = cellIndex;
-
-        tiles.instanceMatrix.needsUpdate = true;
-        tiles.instanceColor.needsUpdate = true;
+        cells.count = index;
         cells.instanceMatrix.needsUpdate = true;
-
         frontColors.needsUpdate = true;
         backColors.needsUpdate = true;
         scales.needsUpdate = true;
-    }, [petri, petri_size]);
 
-    return (
-        <div
-            ref={mountRef}
-            style={{ width: '100%', height: '85dvh' }}
-        />
-    );
+    }, [petri, petri_size, hexScale]);
+
+    return <div ref={mountRef} style={{ width: '100%', height: '85dvh' }} />;
 }

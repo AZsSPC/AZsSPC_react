@@ -7,6 +7,7 @@ import AZInstrumentsPanel, { AZInstrumentsSubpanel } from '../../../components/e
 import AZInputRange from '../../../components/elements/AZInputRange';
 import RuntimeProvider, { useRuntime } from '../../../providers/RuntimeProvider';
 import './Styles.css';
+
 function DNAInterpreterInner() {
 
 	const speedRef = useRef(null);
@@ -16,7 +17,7 @@ function DNAInterpreterInner() {
 	const [petri, setPetri] = useState(() =>
 		Array.from({ length: petri_size.x }, () =>
 			Array.from({ length: petri_size.y },
-				() => Math.random() < 0.1 ? new Cell() : "SPACE"
+				() => Math.random() < 0.1 ? Cell.random() : "SPACE"
 			)
 		)
 	);
@@ -140,7 +141,7 @@ function DNAInterpreterInner() {
 			{ length: petri_size.x },
 			() => Array.from(
 				{ length: petri_size.y },
-				() => Math.random() < 0.05 ? new Cell() : "SPACE"
+				() => Math.random() < 0.05 ? Cell.random() : "SPACE"
 			)
 		);
 
