@@ -220,8 +220,7 @@ void main(){
         if (!container) return;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.domElement.style.touchAction = 'pinch-zoom';
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+
         container.appendChild(renderer.domElement);
 
         container.style.touchAction = 'none';
@@ -290,83 +289,45 @@ void main(){
 
         threeRef.current = { renderer, scene, camera, cells, frontColors, backColors, scales };
 
-        // ---------- CAMERA CONTROLS ----------
+        /* ---------- CAMERA ---------- */
 
-        let isDragging = false;
-        let lastPinchDist = -1;
+        let dragging = false;
         const dragStart = new THREE.Vector2();
         const camStart = new THREE.Vector3();
-        const pinchThreshold = 8; // pixels
 
-        // Common pointer events (drag on mouse + single touch)
-        container.addEventListener('pointerdown', e => {
-            if (e.pointerType === 'touch' && e.touches?.length === 2) return;
-            isDragging = true;
+        container.onpointerdown = e => {
+            dragging = true;
             dragStart.set(e.clientX, e.clientY);
             camStart.copy(camera.position);
-        }, { passive: false });
+        };
 
-        container.addEventListener('pointermove', e => {
-            if (!isDragging) return;
-            if (e.pointerType === 'touch' && e.touches?.length === 2) return;
+        container.onpointermove = e => {
+            if (!dragging) return;
 
             const dx = (e.clientX - dragStart.x) / container.clientWidth;
             const dy = (e.clientY - dragStart.y) / container.clientHeight;
 
-            const worldW = (camera.right - camera.left) / camera.zoom;
-            const worldH = (camera.top - camera.bottom) / camera.zoom;
+            const worldW = camera.right - camera.left;
+            const worldH = camera.top - camera.bottom;
 
-            camera.position.x = camStart.x - dx * worldW;
-            camera.position.y = camStart.y + dy * worldH;
+            camera.position.x = camStart.x - dx * worldW / camera.zoom;
+            camera.position.y = camStart.y + dy * worldH / camera.zoom;
 
             bgMat.uniforms.uCameraPos.value.set(camera.position.x, camera.position.y);
-        }, { passive: false });
+        };
 
-        window.addEventListener('pointerup', () => {
-            isDragging = false;
-            lastPinchDist = -1;
-        });
+        window.onpointerup = () => dragging = false;
 
-        window.addEventListener('pointercancel', () => {
-            isDragging = false;
-            lastPinchDist = -1;
-        });
-
-        // Wheel zoom (desktop / trackpad)
-        container.addEventListener('wheel', e => {
+        container.onwheel = e => {
             e.preventDefault();
-            const zoomFactor = 1 + e.deltaY * 0.0008;
-            camera.zoom = THREE.MathUtils.clamp(camera.zoom / zoomFactor, 0.2, 5);
+
+            camera.zoom = THREE.MathUtils.clamp(camera.zoom / (1 + e.deltaY * 0.001), 0.2, 5);
+
             camera.updateProjectionMatrix();
+
             bgMat.uniforms.uViewSize.value = baseViewSize / camera.zoom;
-        }, { passive: false });
+        };
 
-        // Pinch zoom (mobile only)
-        container.addEventListener('touchstart', e => {
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                const t1 = e.touches[0];
-                const t2 = e.touches[1];
-                lastPinchDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
-            }
-        }, { passive: false });
-
-        container.addEventListener('touchmove', e => {
-            if (e.touches.length !== 2) return;
-            e.preventDefault();
-
-            const t1 = e.touches[0];
-            const t2 = e.touches[1];
-            const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
-
-            if (lastPinchDist > 0 && Math.abs(dist - lastPinchDist) > pinchThreshold) {
-                const factor = dist / lastPinchDist;
-                camera.zoom = THREE.MathUtils.clamp(camera.zoom * factor, 0.2, 5);
-                camera.updateProjectionMatrix();
-                bgMat.uniforms.uViewSize.value = baseViewSize / camera.zoom;
-                lastPinchDist = dist;
-            }
-        }, { passive: false });
         /* ---------- RENDER LOOP ---------- */
 
         let raf;
