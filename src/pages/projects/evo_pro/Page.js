@@ -30,7 +30,6 @@ function DNAInterpreterInner() {
 	// ===== HEX NEIGHBOR =====
 
 	const getNeighbor = useCallback((q, r, dir) => {
-
 		const even = r % 2 === 0;
 
 		switch (dir) {
@@ -40,9 +39,9 @@ function DNAInterpreterInner() {
 			case 3: return [q - 1, r];
 			case 4: return [q + (even ? -1 : 0), r - 1];
 			case 5: return [q + (even ? 0 : 1), r - 1];
-			default: return [q, r];
 		}
-
+		
+		return [q, r];
 	}, []);
 
 
