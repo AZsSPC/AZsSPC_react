@@ -220,46 +220,6 @@ void main(){
         if (!container) return;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-// Inside useEffect, right after creating renderer:
-
-renderer.domElement.style.touchAction = 'pinch-zoom';
-
-// Remove these lines completely:
-// container.style.touchAction = 'none';
-// container.addEventListener('touchmove', … {passive:false})   ← the old one
-
-// Replace your zoom logic with this clean version:
-let lastPinchDistance = -1;
-
-container.addEventListener('touchstart', e => {
-  if (e.touches.length === 2) {
-    e.preventDefault();
-    const [t1, t2] = e.touches;
-    lastPinchDistance = Math.hypot(
-      t1.clientX - t2.clientX,
-      t1.clientY - t2.clientY
-    );
-  }
-}, { passive: false });
-
-container.addEventListener('touchmove', e => {
-  if (e.touches.length === 2) {
-    e.preventDefault();
-    const [t1, t2] = e.touches;
-    const dist = Math.hypot(
-      t1.clientX - t2.clientX,
-      t1.clientY - t2.clientY
-    );
-
-    if (lastPinchDistance > 0) {
-      const factor = dist / lastPinchDistance;
-      camera.zoom = THREE.MathUtils.clamp(camera.zoom * factor, 0.2, 5);
-      camera.updateProjectionMatrix();
-      bgMat.uniforms.uViewSize.value = baseViewSize / camera.zoom;
-    }
-    lastPinchDistance = dist;
-  }
-}, { passive: false });
 
         container.appendChild(renderer.domElement);
 
@@ -331,42 +291,72 @@ container.addEventListener('touchmove', e => {
 
         /* ---------- CAMERA ---------- */
 
-        let dragging = false;
         const dragStart = new THREE.Vector2();
         const camStart = new THREE.Vector3();
+        let isDragging = false;
+        let lastPinchDist = -1;
+        let pinchThreshold = 5; // pixels — ignore tiny changes
 
-        container.onpointerdown = e => {
-            dragging = true;
+        container.addEventListener('pointerdown', e => {
+            if (e.pointerType === 'touch' && e.touches?.length === 2) return;
+            isDragging = true;
             dragStart.set(e.clientX, e.clientY);
             camStart.copy(camera.position);
-        };
+        }, { passive: false });
 
-        container.onpointermove = e => {
-            if (!dragging) return;
+        container.addEventListener('pointermove', e => {
+            if (!isDragging) return;
+            if (e.pointerType === 'touch' && e.touches?.length === 2) return;
 
             const dx = (e.clientX - dragStart.x) / container.clientWidth;
             const dy = (e.clientY - dragStart.y) / container.clientHeight;
 
-            const worldW = camera.right - camera.left;
-            const worldH = camera.top - camera.bottom;
+            const worldW = (camera.right - camera.left) / camera.zoom;
+            const worldH = (camera.top - camera.bottom) / camera.zoom;
 
-            camera.position.x = camStart.x - dx * worldW / camera.zoom;
-            camera.position.y = camStart.y + dy * worldH / camera.zoom;
+            camera.position.x = camStart.x - dx * worldW;
+            camera.position.y = camStart.y + dy * worldH;
 
             bgMat.uniforms.uCameraPos.value.set(camera.position.x, camera.position.y);
-        };
+        }, { passive: false });
 
-        window.onpointerup = () => dragging = false;
+        window.addEventListener('pointerup', () => {
+            isDragging = false;
+            lastPinchDist = -1;
+        });
 
-        container.onwheel = e => {
+        container.addEventListener('pointercancel', () => {
+            isDragging = false;
+            lastPinchDist = -1;
+        });
+
+        // Pinch zoom (touch only)
+        container.addEventListener('touchstart', e => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const t1 = e.touches[0];
+                const t2 = e.touches[1];
+                lastPinchDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+            }
+        }, { passive: false });
+
+        container.addEventListener('touchmove', e => {
+            if (e.touches.length !== 2) return;
             e.preventDefault();
 
-            camera.zoom = THREE.MathUtils.clamp(camera.zoom / (1 + e.deltaY * 0.001), 0.2, 5);
+            const t1 = e.touches[0];
+            const t2 = e.touches[1];
+            const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
 
-            camera.updateProjectionMatrix();
+            if (lastPinchDist > 0 && Math.abs(dist - lastPinchDist) > pinchThreshold) {
+                const factor = dist / lastPinchDist;
+                camera.zoom = THREE.MathUtils.clamp(camera.zoom * factor, 0.2, 5);
+                camera.updateProjectionMatrix();
+                bgMat.uniforms.uViewSize.value = baseViewSize / camera.zoom;
+            }
 
-            bgMat.uniforms.uViewSize.value = baseViewSize / camera.zoom;
-        };
+            lastPinchDist = dist;
+        }, { passive: false });
 
         /* ---------- RENDER LOOP ---------- */
 
