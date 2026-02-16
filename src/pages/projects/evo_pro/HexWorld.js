@@ -220,7 +220,8 @@ void main(){
         if (!container) return;
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
-
+        renderer.domElement.style.touchAction = 'pinch-zoom';
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
         container.appendChild(renderer.domElement);
 
         container.style.touchAction = 'none';
@@ -289,14 +290,15 @@ void main(){
 
         threeRef.current = { renderer, scene, camera, cells, frontColors, backColors, scales };
 
-        /* ---------- CAMERA ---------- */
+        // ---------- CAMERA CONTROLS ----------
 
-        const dragStart = new THREE.Vector2();
-        const camStart = new THREE.Vector3();
         let isDragging = false;
         let lastPinchDist = -1;
-        let pinchThreshold = 5; // pixels — ignore tiny changes
+        const dragStart = new THREE.Vector2();
+        const camStart = new THREE.Vector3();
+        const pinchThreshold = 8; // pixels
 
+        // Common pointer events (drag on mouse + single touch)
         container.addEventListener('pointerdown', e => {
             if (e.pointerType === 'touch' && e.touches?.length === 2) return;
             isDragging = true;
@@ -325,12 +327,21 @@ void main(){
             lastPinchDist = -1;
         });
 
-        container.addEventListener('pointercancel', () => {
+        window.addEventListener('pointercancel', () => {
             isDragging = false;
             lastPinchDist = -1;
         });
 
-        // Pinch zoom (touch only)
+        // Wheel zoom (desktop / trackpad)
+        container.addEventListener('wheel', e => {
+            e.preventDefault();
+            const zoomFactor = 1 + e.deltaY * 0.0008;
+            camera.zoom = THREE.MathUtils.clamp(camera.zoom / zoomFactor, 0.2, 5);
+            camera.updateProjectionMatrix();
+            bgMat.uniforms.uViewSize.value = baseViewSize / camera.zoom;
+        }, { passive: false });
+
+        // Pinch zoom (mobile only)
         container.addEventListener('touchstart', e => {
             if (e.touches.length === 2) {
                 e.preventDefault();
@@ -353,11 +364,9 @@ void main(){
                 camera.zoom = THREE.MathUtils.clamp(camera.zoom * factor, 0.2, 5);
                 camera.updateProjectionMatrix();
                 bgMat.uniforms.uViewSize.value = baseViewSize / camera.zoom;
+                lastPinchDist = dist;
             }
-
-            lastPinchDist = dist;
         }, { passive: false });
-
         /* ---------- RENDER LOOP ---------- */
 
         let raf;
