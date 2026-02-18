@@ -115,7 +115,7 @@ function DNAInterpreterInner() {
 				if (!(cell instanceof Cell)) continue;
 				// базовый метаболизм (mass-dependent)
 				cell.stat.energy -= 0.1 + 0.02 * (cell.stat.mass || 0);
-				cell.stat.waste += 0.05;
+				cell.stat.waste += 0.1 * cell.age;
 
 				// здоровье падает если мусора слишком много (больше половины массы)
 				const excessWaste = (cell.stat.waste || 0) - (cell.stat.mass || 0) / 2;

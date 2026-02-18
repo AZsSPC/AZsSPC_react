@@ -32,7 +32,7 @@ const PROJECTS = {
         path: 'projects/evo_pro',
         title: 'Evo 2.0',
         description: 'An advanced evolutionary simulation of cells',
-        tags: ['web', 'for all', 'simulation', 'evolution']
+        tags: ['WIP', 'web', 'for all', 'simulation', 'evolution']
     },
 
 }

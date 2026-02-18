@@ -82,11 +82,9 @@ const OPCODES = {
         action: () => ({ intent: { type: 'ATTACK' } })
     },
 
-    /* ================= MARKERS ================= */
-
     0b000111: {
-        name: 'MARK',
-        desc: 'anchor for FIND_MARK',
+        name: 'BITE',
+        desc: '',
         cost: () => true,
         action: () => null
     },
