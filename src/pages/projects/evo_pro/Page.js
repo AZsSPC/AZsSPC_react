@@ -10,7 +10,7 @@ import './Styles.css';
 
 function DNAInterpreterInner() {
 
-	const speedRef = useRef(null);
+	const [mutationRate, setMutationRate] = useState(0.1);
 
 	const petri_size = useMemo(() => ({ x: 200, y: 200 }), []);
 
@@ -39,9 +39,8 @@ function DNAInterpreterInner() {
 			case 3: return [q - 1, r];
 			case 4: return [q + (even ? -1 : 0), r - 1];
 			case 5: return [q + (even ? 0 : 1), r - 1];
+			default: return [q, r];
 		}
-
-		return [q, r];
 	}, []);
 
 	// ================= CYCLE =================
@@ -72,7 +71,6 @@ function DNAInterpreterInner() {
 					if (!op || !op.cost(cell)) break;
 
 					cell.fatigue += op.fatigue ?? 1;
-
 
 					const result = op.is_scan
 						? op.action(cell, getNeighbor(x, y, cell.rotation))
@@ -181,7 +179,7 @@ function DNAInterpreterInner() {
 			parent.stat.energy *= 0.5;
 			parent.stat.mass *= 0.5;
 
-			const child = new Cell(parent.dna, { energy: parent.stat.energy }, 0.1);
+			const child = new Cell(parent.dna, { energy: parent.stat.energy }, mutationRate);
 
 			births.push({ child, at: [nx, ny] });
 		}
@@ -253,7 +251,7 @@ function DNAInterpreterInner() {
 
 		return true;
 
-	}, [petri_size, getNeighbor]);
+	}, [petri_size, mutationRate, getNeighbor]);
 
 
 
@@ -287,7 +285,6 @@ function DNAInterpreterInner() {
 						onChange={(e) => { fcRef.current = parseInt(e.target.value, 10) || 0; }}
 					/> */}
 					<AZInputRange
-						ref={speedRef}
 						label="Speed"
 						color="purple"
 						min={0}
@@ -296,6 +293,16 @@ function DNAInterpreterInner() {
 						onChange={(e) => {
 							setTimeout(Math.round(Math.pow(200, 1 - Number(e.target.value) / 10)));
 						}}
+
+					/>
+					<AZInputRange
+						label="Mutation %"
+						color="purple"
+						min={0.001}
+						max={0.5}
+						step={0.001}
+						defaultValue={0.1}
+						onChange={(e) => { setMutationRate(e.target.value); }}
 
 					/>
 				</AZInstrumentsSubpanel>

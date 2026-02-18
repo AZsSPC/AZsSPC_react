@@ -95,7 +95,13 @@ function randomColorDNA() {
 export default class Cell {
 	constructor(dna = DEFAULT_DNA, stat = {}, mutate = 0) {
 		this.dna = dna.toUpperCase();
-		if (Math.random() < mutate) this.dna = this.dna.match(/\w{4}/g,).map(code => intToBase32(decodeInstruction(code) ^ ((Math.random() * 64) << 4)))
+		if (Math.random() < mutate) this.dna = this.dna.match(/\w{4}/g,)
+			.map(code => intToBase32(decodeInstruction(code) ^ ((Math.random() * 64) << 4)))
+			.join('') + (this.dna.length >= 200
+				? ''
+				: '0000'.repeat(
+					Math.random() * Math.max(1, (200 - this.dna.length) / 20) | 0
+				));
 		this.headerSize = HEADER_SIZE;
 		this.rotation = Math.random() * 6 | 0;
 
