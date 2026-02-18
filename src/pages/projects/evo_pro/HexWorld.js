@@ -120,14 +120,14 @@ void main(){
     vec2 center = axialToWorld(axial);
 
 	float color_add =
-		(center.x > canvasMin.x + 2.0 &&
+		(center.x > canvasMin.x + 1.0 &&
 		 center.y > canvasMin.y &&
-		 center.x < canvasMax.x - 2.0 &&
+		 center.x < canvasMax.x - 1.0 &&
 		 center.y < canvasMax.y)
         ? 0.75 : 
-        (center.x < canvasMin.x - 3.0 ||
+        (center.x < canvasMin.x - 4.0 ||
 		 center.y < canvasMin.y - 3.0 ||
-		 center.x > canvasMax.x + 3.0 ||
+		 center.x > canvasMax.x + 4.0 ||
 		 center.y > canvasMax.y + 3.0)
         ? 1.0 : 1.45;
 
@@ -321,7 +321,7 @@ void main(){
         container.onwheel = e => {
             e.preventDefault();
 
-            camera.zoom = THREE.MathUtils.clamp(camera.zoom / (1 + e.deltaY * 0.001), 0.2, 5);
+            camera.zoom = THREE.MathUtils.clamp(camera.zoom / (1 + e.deltaY * 0.001), 0.1, 10);
 
             camera.updateProjectionMatrix();
 
@@ -365,30 +365,28 @@ void main(){
 
         let index = 0;
 
-        for (let q = 0; q < petri_size.x; q++) {
-            for (let r = 0; r < petri_size.y; r++) {
+        for (let q = 0; q < petri_size.x; q++) for (let r = 0; r < petri_size.y; r++) {
+            
+            const cell = petri[q][r];
+            if (!(cell instanceof Cell)) continue;
 
-                const cell = petri[q][r];
-                if (!(cell instanceof Cell)) continue;
+            const { x, y } = axialToWorld(r, q, hexScale);
 
-                const { x, y } = axialToWorld(r, q, hexScale);
+            dummy.position.set(x - offsetX, y - offsetY, 0.01);
 
-                dummy.position.set(x - offsetX, y - offsetY, 0.01);
+            dummy.rotation.z = cell.rotation / 3 * Math.PI;
 
-                dummy.rotation.z = cell.rotation / 3 * Math.PI;
+            dummy.updateMatrix();
+            cells.setMatrixAt(index, dummy.matrix);
 
-                dummy.updateMatrix();
-                cells.setMatrixAt(index, dummy.matrix);
+            const f = new THREE.Color(cell.getFrontColorCSS());
+            const b = new THREE.Color(cell.getBackColorCSS());
 
-                const f = new THREE.Color(cell.getFrontColorCSS());
-                const b = new THREE.Color(cell.getBackColorCSS());
+            frontColors.setXYZ(index, f.r, f.g, f.b);
+            backColors.setXYZ(index, b.r, b.g, b.b);
+            scales.setX(index, cell.stat.mass | 0);
 
-                frontColors.setXYZ(index, f.r, f.g, f.b);
-                backColors.setXYZ(index, b.r, b.g, b.b);
-                scales.setX(index, cell.stat.mass | 0);
-
-                index++;
-            }
+            index++;
         }
 
         cells.count = index;

@@ -3,7 +3,18 @@ import OPCODES from './opcodes'
 const HEADER_SIZE = 8;
 const ALPHABET = '0123456789abcdefghijklmnopqrstuv'.toUpperCase(); // base32
 const BASE = 32;
-const DEFAULT_DNA = 'gs5.5d2.00.1000.1000.1000.1000.1g00'.toUpperCase().replaceAll('.', '');
+const DEFAULT_DNA = 'gs5.5d2.00.G000.G000.G000.G000.G000.HG00.G000.G000.G000.G000.JG00.G000.G000.K000.2000.1g00'
+	.toUpperCase().replaceAll('.', '');
+
+const list_table = Array.from({ length: 64 },
+	(_, i) => {
+		console.log(i)
+		const code = intToBase32(i << 4, 2) + '00';
+		return { code, name: decodeInstruction(code).name }
+	}
+);
+console.table(list_table);
+console.table(DEFAULT_DNA.match(/\w{4}/g,).map(code => ({ code, name: decodeInstruction(code).name })));
 
 // ---- Base32 helper functions ----
 function base32ToInt(str) {
@@ -26,7 +37,7 @@ function intToBase32(num, length = 1) {
 }
 
 // ---- Instruction encoding/decoding ----
-function decodeInstruction(chunk) {
+export function decodeInstruction(chunk) {
 	const raw = base32ToInt(chunk); // 20 bits
 
 	const opcode = (raw >> 14) & 0b111111;     // top 6 bits (0–63)
@@ -45,7 +56,7 @@ function decodeInstruction(chunk) {
 		name: opInfo.name,
 		desc: opInfo.desc,
 		color: opInfo.color,
-		cost: opInfo.cost ?? { energy: 1 },
+		cost: opInfo.cost ?? ((cell) => { if (cell.energy > 1) { cell.energy -= 1; return true; } return false; }),
 		action: opInfo.action ?? ((cell_tile, target_tile) => ({ cell_tile, target_tile })),
 		fatigue: opInfo.fatigue ?? 1
 	};
@@ -82,19 +93,26 @@ function randomColorDNA() {
 }
 
 export default class Cell {
-	constructor(dna = DEFAULT_DNA, stat = {}) {
+	constructor(dna = DEFAULT_DNA, stat = {}, mutate = 0) {
 		this.dna = dna.toUpperCase();
+		if (Math.random() < mutate) this.dna = this.dna.match(/\w{4}/g,).map(code => intToBase32(decodeInstruction(code) ^ ((Math.random() * 64) << 4)))
 		this.headerSize = HEADER_SIZE;
 		this.rotation = Math.random() * 6 | 0;
 
 		this.stat = {
-			energy: 1,						// unlimited, energy<=0 means death
+			energy: Math.random() * 99 + 1,	// unlimited, energy<=0 means death
 			mass: Math.random() * 99 + 1,	// float 1-100, out of bounds means death
 			waste: 0,						// if 0-100, if bigger than mass - death
 			nutrient_green: 0,
 			nutrient_red: 0,
 			nutrient_blue: 0,
 			...stat				// override
+		};
+
+		this.cpu = {
+			RO: 0,
+			R1: 0,
+			ZF: 0,
 		};
 
 		this.header = this.dna.slice(0, this.headerSize);
@@ -111,34 +129,6 @@ export default class Cell {
 		this.age = 0;
 		this.fatigue = 0;
 	}
-
-	static step(cell) {
-		cell.age++;
-
-		let intent = null;
-
-		const instructionCount = cell.code.length >> 2;
-
-		if (instructionCount === 0) return { cell, intent: null };
-
-		while (cell.fatigue < 10) {
-			const idx = (cell.q++ % instructionCount) << 2;
-
-			const op = decodeInstruction(cell.code.slice(idx, idx + 4));
-			if (!op) break;
-
-			cell.fatigue += op.fatigue;
-
-			const result = op.action(cell);
-
-			if (result?.intent) intent = result.intent;
-		}
-
-		cell.fatigue -= 10;
-
-		return { cell, intent };
-	}
-
 
 	// ---------- Static factory ----------
 
