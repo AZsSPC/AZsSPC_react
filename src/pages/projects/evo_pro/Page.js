@@ -3,6 +3,7 @@ import AZButton from '../../../components/elements/AZButton';
 import AZRuntimeButton from '../../../components/elements/AZRuntimeButton';
 import HexWorld from './HexWorld';
 import Cell, { decodeInstruction } from './Cell';
+import Blob from './Blob';
 import AZInstrumentsPanel, { AZInstrumentsSubpanel } from '../../../components/elements/AZInstrumentsPanel';
 import AZInputRange from '../../../components/elements/AZInputRange';
 import RuntimeProvider, { useRuntime } from '../../../providers/RuntimeProvider';
@@ -112,10 +113,16 @@ function DNAInterpreterInner() {
 
 				const cell = petri[x][y];
 				if (!(cell instanceof Cell)) continue;
-
-				// базовый метаболизм
-				cell.stat.energy -= 0.1;
+				// базовый метаболизм (mass-dependent)
+				cell.stat.energy -= 0.1 + 0.02 * (cell.stat.mass || 0);
 				cell.stat.waste += 0.05;
+
+				// здоровье падает если мусора слишком много (больше половины массы)
+				const excessWaste = (cell.stat.waste || 0) - (cell.stat.mass || 0) / 2;
+				if (excessWaste > 0) {
+					const healthLoss = excessWaste * 0.1;
+					cell.stat.health = Math.max(0, (cell.stat.health || 0) - healthLoss);
+				}
 			}
 
 		/* ---------- Phase C: resolve fights ---------- */
@@ -133,6 +140,10 @@ function DNAInterpreterInner() {
 
 			const dmg = atk.attacker.stat.mass * 0.1;
 			target.stat.mass -= dmg;
+			// здоровье падает при атаке
+			target.stat.health = Math.max(0, (target.stat.health || 0) - dmg);
+			// атакующий получает часть энергии от урона
+			atk.attacker.stat.energy = (atk.attacker.stat.energy || 0) + dmg * 0.8;
 		}
 
 		/* ---------- Phase D: resolve deaths ---------- */
@@ -218,19 +229,45 @@ function DNAInterpreterInner() {
 
 		const next = petri.map(col => [...col]);
 
-		// удалить мёртвых
+		// удалить мёртвых -> превращаем в Blob (куча нутриентов)
 		for (const key of intents_death) {
 			const [x, y] = key.split(',').map(Number);
-			next[x][y] = "MEAT"; // труп
+			const dead = petri[x][y];
+			if (dead instanceof Cell) {
+				const blobStat = {
+					energy: (dead.stat.energy || 0) + (dead.stat.mass || 0), // масса превращается в энергию
+					mass: 0,
+					nutrient_red: dead.stat.nutrient_red || 0,
+					nutrient_green: dead.stat.nutrient_green || 0,
+					nutrient_blue: dead.stat.nutrient_blue || 0,
+					waste: dead.stat.waste || 0
+				};
+				next[x][y] = new Blob(blobStat);
+			}
 		}
 
-		// применить движения
+		// применить движения (включая поглощение Blob)
 		for (const move of approved) {
 
 			const [fx, fy] = move.from;
 			const [tx, ty] = move.to;
 
 			if (intents_death.has(`${fx},${fy}`)) continue;
+
+			const targetVal = next[tx][ty];
+			// если на месте Blob — поглотить
+			if (targetVal instanceof Blob) {
+				const blob = targetVal;
+				move.cell.stat.energy = (move.cell.stat.energy || 0) + (blob.stat.energy || 0) * 0.5;
+				move.cell.stat.mass = (move.cell.stat.mass || 0) + (blob.stat.mass || 0) * 0.3;
+				for (const [k, v] of Object.entries(blob.stat)) {
+					if (k.startsWith('nutrient_')) {
+						move.cell.stat[k] = (move.cell.stat[k] || 0) + v;
+					}
+				}
+				next[tx][ty] = "SPACE"; // убрать Blob
+			}
+
 			if (next[tx][ty] instanceof Cell) continue;
 
 			next[fx][fy] = "SPACE";

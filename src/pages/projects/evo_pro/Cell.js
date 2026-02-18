@@ -108,6 +108,7 @@ export default class Cell {
 		this.stat = {
 			energy: Math.random() * 99 + 1,	// unlimited, energy<=0 means death
 			mass: Math.random() * 99 + 1,	// float 1-100, out of bounds means death
+			health: 100,                    // max health
 			waste: 0,						// if 0-100, if bigger than mass - death
 			nutrient_green: 0,
 			nutrient_red: 0,

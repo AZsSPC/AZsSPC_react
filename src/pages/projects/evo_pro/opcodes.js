@@ -28,8 +28,8 @@ const OPCODES = {
         color: 'yellow',
         fatigue: 20,
         cost: (cell) => {
-            if (cell.stat.energy <= 1) return false;
-            cell.stat.energy -= 1;
+            if ((cell.stat.energy || 0) <= 0.5) return false;
+            cell.stat.energy -= 0.5;
             return true;
         },
         action: () => ({ intent: { type: 'MOVE' } })
