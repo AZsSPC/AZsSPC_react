@@ -9,19 +9,11 @@ function Page() {
             <h2>Contacts</h2>
 
             <p>
-                You can call me <AZSpan color="gold">AZ</AZSpan>.
-                Glad you stopped by.
-            </p>
-
-            <p>
-                I’m an independent developer creating{' '}
-                <AZSpan color="blue">web tools</AZSpan>,{' '}
-                <AZSpan color="magenta">simulations</AZSpan>{' '}
-                and experimental programming projects.
-            </p>
-
-            <p>
-                Choose the most convenient way to reach me below.
+                Choose the most convenient way to reach me.
+                <p>
+                </p>
+                Messages related to projects published on this site
+                are always welcome!
             </p>
         </section>
 
@@ -29,18 +21,12 @@ function Page() {
         <section>
             <h2>What you can contact me about</h2>
 
-            <p>
-                Feel free to write me regarding:
-                <ul>
-                    <li> project feedback or suggestions </li>
-                    <li> collaboration ideas </li>
-                    <li> bug reports or issues you found </li>
-                </ul>
-            </p>
-
-            <p>
-                Questions related to projects published on this site are always welcome!
-            </p>
+            <ul>
+                <li>project feedback or suggestions</li>
+                <li>collaboration ideas</li>
+                <li>bug reports or issues</li>
+                <li>technical discussions related to published projects</li>
+            </ul>
         </section>
 
 
@@ -49,7 +35,7 @@ function Page() {
 
             <p className="contact-item">
                 <AZSpan color="blue">Telegram:</AZSpan>{' '}
-                <AZSpan>fastest response, preferred way</AZSpan>{' '}
+                <AZSpan>fastest response, preferred channel</AZSpan>{' '}
                 <AZLink color="blue" href="https://t.me/AZ_218">
                     t.me/AZ_218
                 </AZLink>
@@ -57,7 +43,7 @@ function Page() {
 
             <p className="contact-item">
                 <AZSpan color="magenta">Discord:</AZSpan>{' '}
-                <AZSpan>alternative contact, replies may take longer</AZSpan>{' '}
+                <AZSpan>alternative contact</AZSpan>{' '}
                 <AZLink
                     color="magenta"
                     href="https://discord.com/users/467051304985034784"
@@ -68,7 +54,7 @@ function Page() {
 
             <p className="contact-item">
                 <AZSpan color="gold">Email:</AZSpan>{' '}
-                <AZSpan>formal or long messages</AZSpan>{' '}
+                <AZSpan>for formal or long messages</AZSpan>{' '}
                 <AZLink color="gold" href="mailto:az.spc.contact@gmail.com">
                     Send email
                 </AZLink>{' '}
@@ -83,14 +69,13 @@ function Page() {
             <h2>Availability</h2>
 
             <p>
-                I usually respond within a day on{' '}
-                <AZSpan color="blue">Telegram</AZSpan>.
+                Telegram responses usually arrive within a day.
                 Other platforms may take longer depending on workload.
             </p>
 
             <p>
-                Please note that this is a personal project space,
-                so response times may vary.
+                This is a personal project space, so response times
+                are not guaranteed.
             </p>
         </section>
     </>
