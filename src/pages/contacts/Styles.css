@@ -29,3 +29,7 @@ section h2::before {
     font-weight: bold;
     color: var(--c-main-l);
 }
+
+section ul {
+    padding-left: 2em;
+}

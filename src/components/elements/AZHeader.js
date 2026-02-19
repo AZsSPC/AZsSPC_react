@@ -9,7 +9,8 @@ import './AZHeader.css';
 function AZHeader() {
     const pathname = 'https://github.com/AZsSPC/AZsSPC_react/blob/main/src/pages/' + ALL_PAGES[window.location.pathname]?.path + '/';
     const notify = useNotify();
-
+console.log('head')
+    
     return (
         <div className='az-header-container'>
             <header className='az-header'>
