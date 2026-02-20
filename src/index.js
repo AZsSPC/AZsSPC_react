@@ -64,37 +64,39 @@ const App = () => {
 
     const page = ALL_PAGES[pathname];
 
-    if (!page) {
-      setPage(() => Page404)
-      document.title = 'AZsSPC - 404';
-      return;
+    async function loadPage() {
+      if (!page) {
+        setPage(() => Page404);
+        document.title = 'AZsSPC - 404';
+      } else {
+        const mod = await page.load();
+        if (cancelled) return;
+
+        setPage(() => mod.default);
+        document.title = `AZsSPC - ${page.title || pathname}`;
+      }
+
+      requestAnimationFrame(() => {
+        if (cancelled) return;
+
+        const { hash } = window.location;
+
+        if (hash) {
+          const el = document.getElementById(hash.slice(1));
+          if (el) {
+            el.scrollIntoView({ block: 'start' });
+            return;
+          }
+        }
+
+        window.scrollTo(0, 0);
+      });
     }
 
-    page.load().then(mod => {
-      if (cancelled) return;
+    loadPage();
 
-      setPage(() => mod.default);
-      document.title = `AZsSPC - ${page.title || pathname}`;
-    })
-
-    return () => {
-      cancelled = true;
-    }
+    return () => { cancelled = true; };
   }, [pathname]);
-
-
-  useEffect(() => {
-    if (!Page) return;
-
-    const { hash } = window.location;
-    if (!hash) return;
-
-    requestAnimationFrame(() => {
-      const id = hash.slice(1);
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView();
-    });
-  }, [Page]);
 
   //id={`page-${pathname.toLowerCase().replace(/\W+/,'-')}`}
   return Page ? <Page /> : <Page404 />;
