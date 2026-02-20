@@ -1,4 +1,4 @@
-import { navigate } from '../../index' // путь поправь под свою структуру
+import { navigate } from '../../index'
 
 function AZLink({ children, href, className = '', color, target, pure = false, is_panel = false, ...props }) {
 
@@ -6,6 +6,10 @@ function AZLink({ children, href, className = '', color, target, pure = false, i
         href?.startsWith('http') ||
         href?.startsWith('mailto:') ||
         href?.startsWith('tel:');
+
+    const isHashLink =
+        href?.startsWith('#') ||
+        href?.startsWith(window.location.pathname + '#');
 
     const handleClick = (e) => {
         if (!href || isExternal) return;
@@ -20,9 +24,11 @@ function AZLink({ children, href, className = '', color, target, pure = false, i
             target === '_blank'
         ) return;
 
+        if (isHashLink) return;
+
         e.preventDefault();
         navigate(href);
-    }
+    };
 
     return (
         <a

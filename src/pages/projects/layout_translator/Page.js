@@ -59,7 +59,7 @@ function Page() {
         return result
     }, [input, translateLayout])
 
-    return (
+    return (<main>
         <div className='translator-page'>
             <AZInstrumentsPanel>
                 <AZButton onClick={() => setInput('')} color='magenta'>Clear</AZButton>
@@ -70,6 +70,7 @@ function Page() {
             <textarea id='text-input' value={input} onChange={e => (setInput(e.target.value))} placeholder='Input you cursed text here' />
             <textarea id='text-output' value={output} readOnly placeholder='Output will appear here' />
         </div>
+    </main>
     )
 }
 

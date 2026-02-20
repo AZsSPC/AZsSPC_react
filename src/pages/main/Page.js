@@ -26,7 +26,7 @@ function Page() {
         }</ul>);
     }
 
-    return <>
+    return <main className='page_main'>
         <section>
             <h2>Welcome to AZsSPC's site!</h2>
             <p>
@@ -117,7 +117,7 @@ function Page() {
             <h2>Pages list</h2>
             {recursiveRender(PAGES)}
         </section>
-    </>;
+    </main>;
 }
 
 export default Page;

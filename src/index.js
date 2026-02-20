@@ -12,12 +12,26 @@ import './AZBasicElements.css'
 import { ALL_PAGES } from './Pages'
 
 
-export function navigate(path) {
-  if (window.location.pathname === path) return
-  console.log('>>>', path)
+export function navigate(url) {
+  const currentPath = window.location.pathname;
+  const currentHash = window.location.hash;
 
-  window.history.pushState({}, '', path)
-  window.dispatchEvent(new PopStateEvent('popstate'))
+  const [path, hash] = url.split('#');
+
+  /* ---------- HASH ONLY NAVIGATION ---------- */
+  if ((path === '' || path === currentPath) && hash !== undefined) {
+    // same page → let browser handle scrolling logic
+    if ('#' + hash === currentHash) return;
+
+    window.location.hash = hash;
+    return;
+  }
+
+  /* ---------- FULL SPA NAVIGATION ---------- */
+  if (currentPath + currentHash === url) return;
+
+  window.history.pushState({}, '', url);
+  window.dispatchEvent(new PopStateEvent('popstate'));
 }
 
 
@@ -32,6 +46,17 @@ const App = () => {
 
     window.addEventListener('popstate', onPopState)
     return () => window.removeEventListener('popstate', onPopState)
+  }, []);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const id = window.location.hash.slice(1);
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView();
+    };
+
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
   useEffect(() => {
@@ -71,8 +96,8 @@ const App = () => {
     });
   }, [Page]);
 
-
-  return Page ? <Page /> : <Page404 />
+  //id={`page-${pathname.toLowerCase().replace(/\W+/,'-')}`}
+  return Page ? <Page /> : <Page404 />;
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -81,9 +106,7 @@ root.render(
   <React.StrictMode>
     <NotificationProvider>
       <AZHeader />
-      <main>
-        <App />
-      </main>
+      <App />
     </NotificationProvider>
   </React.StrictMode>
 );

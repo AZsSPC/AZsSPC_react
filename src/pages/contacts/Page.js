@@ -4,14 +4,14 @@ import AZSpan from '../../components/elements/AZSpan'
 import AZButtonCopy from '../../components/elements/AZButtonCopy'
 
 function Page() {
-    return (<>
+    return (<main className='page_contacts'>
         <section>
             <h2>Contacts</h2>
 
             <p>
                 Choose the most convenient way to reach me.
-                <p>
-                </p>
+            </p>
+            <p>
                 Messages related to projects published on this site
                 are always welcome!
             </p>
@@ -78,7 +78,7 @@ function Page() {
                 are not guaranteed.
             </p>
         </section>
-    </>
+    </main>
     )
 }
 

@@ -9,13 +9,13 @@ import './AZHeader.css';
 function AZHeader() {
     const pathname = 'https://github.com/AZsSPC/AZsSPC_react/blob/main/src/pages/' + ALL_PAGES[window.location.pathname]?.path + '/';
     const notify = useNotify();
-console.log('head')
-    
+    console.log('head')
+
     return (
         <div className='az-header-container'>
             <header className='az-header'>
                 <AZLink color='red' href='/' pure={true}>main</AZLink>
-                <AZLink color='green' href={window.location.pathname === '/' ? '#pages' : '/#pages'} pure={true}>pages</AZLink>
+                <AZLink color='green' href='/#pages' pure={true}>pages</AZLink>
                 <AZLink color='blue' href={pathname} pure={true}>code</AZLink>
                 <AZButton color='gold' onClick={(e) => {
                     notify('Unavailable yet', { type: 'info' });

@@ -1,11 +1,11 @@
-main {
+.page_contacts {
     align-items: center;
     gap: 1ch;
     padding-bottom: 40dvh;
     padding: 1ch 1ch 40dvh 1ch;
 }
 
-section {
+.page_contacts section {
     display: flex;
     flex-direction: column;
     max-width: 800px;
@@ -18,18 +18,18 @@ section {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-section h2 {
+.page_contacts h2 {
     font-size: 18px;
     font-weight: normal;
 }
 
-section h2::before {
+.page_contacts h2::before {
     margin-right: 0.5ch;
     content: '&';
     font-weight: bold;
     color: var(--c-main-l);
 }
 
-section ul {
+.page_contacts ul {
     padding-left: 2em;
 }

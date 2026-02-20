@@ -313,46 +313,45 @@ function DNAInterpreterInner() {
 		setPetri(world);
 	}
 
-	return (
-		<>
-			<AZInstrumentsPanel>
-				<AZInstrumentsSubpanel>
-					{/* <AZInputRange ref={foodRef} label="Food per cycle" color="green"
+	return (<main>
+		<AZInstrumentsPanel>
+			<AZInstrumentsSubpanel>
+				{/* <AZInputRange ref={foodRef} label="Food per cycle" color="green"
 						min={0} max={50} defaultValue={5}
 						onChange={(e) => { fcRef.current = parseInt(e.target.value, 10) || 0; }}
 					/> */}
-					<AZInputRange
-						label="Speed"
-						color="purple"
-						min={0}
-						max={10}
-						defaultValue={5}
-						onChange={(e) => {
-							setTimeout(Math.round(Math.pow(200, 1 - Number(e.target.value) / 10)));
-						}}
+				<AZInputRange
+					label="Speed"
+					color="purple"
+					min={0}
+					max={10}
+					defaultValue={5}
+					onChange={(e) => {
+						setTimeout(Math.round(Math.pow(200, 1 - Number(e.target.value) / 10)));
+					}}
 
-					/>
-					<AZInputRange
-						label="Mutation %"
-						color="purple"
-						min={0.001}
-						max={0.5}
-						step={0.001}
-						defaultValue={0.1}
-						onChange={(e) => { setMutationRate(e.target.value); }}
+				/>
+				<AZInputRange
+					label="Mutation %"
+					color="purple"
+					min={0.001}
+					max={0.5}
+					step={0.001}
+					defaultValue={0.1}
+					onChange={(e) => { setMutationRate(e.target.value); }}
 
-					/>
-				</AZInstrumentsSubpanel>
+				/>
+			</AZInstrumentsSubpanel>
 
-				<AZInstrumentsSubpanel>
-					{/* <AZInputValue ref={iwRef} label="Size" color="magenta"
+			<AZInstrumentsSubpanel>
+				{/* <AZInputValue ref={iwRef} label="Size" color="magenta"
 						min={10} max={100} step={1} defaultValue={20}
 					/> */}
-					<AZButton onClick={generate} color="gold">Reset</AZButton>
-					<AZRuntimeButton />
-				</AZInstrumentsSubpanel>
-			</AZInstrumentsPanel>
-			{/* 
+				<AZButton onClick={generate} color="gold">Reset</AZButton>
+				<AZRuntimeButton />
+			</AZInstrumentsSubpanel>
+		</AZInstrumentsPanel>
+		{/* 
 			<div style={{ marginTop: 10 }}>
 				<strong>DNA: </strong>
 				<span style={{ wordBreak: 'break-all' }}>
@@ -360,8 +359,8 @@ function DNAInterpreterInner() {
 				</span>
 			</div> */}
 
-			<HexWorld petri={petri} petri_size={petri_size} />
-		</>
+		<HexWorld petri={petri} petri_size={petri_size} />
+	</main>
 	);
 }
 

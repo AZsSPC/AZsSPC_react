@@ -3,7 +3,7 @@ import AZSpan from '../../components/elements/AZSpan'
 import './Styles.css'
 
 function Page() {
-    return (<>
+    return (<main className='page_about'>
         <section>
             <h2>About</h2>
 
@@ -68,7 +68,7 @@ function Page() {
                 </AZLink>.
             </p>
         </section>
-    </>
+    </main>
     )
 }
 

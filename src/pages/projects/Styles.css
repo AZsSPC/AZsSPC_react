@@ -1,13 +1,3 @@
-#projects {
-    display: flex;
-    gap: 1ch;
-    flex-flow: column;
-    align-items: stretch;
-    align-content: end;
-    max-width: 800px;
-    width: 100%;
-}
-
 .project-link-panel {
     display: flex;
     flex-direction: column;

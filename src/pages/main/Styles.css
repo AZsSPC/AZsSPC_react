@@ -1,11 +1,11 @@
-main {
+.page_main {
     align-items: center;
     gap: 1ch;
     padding-bottom: 40dvh;
     padding: 1ch 1ch 40dvh 1ch;
 }
 
-section {
+.page_main section {
     display: flex;
     flex-direction: column;
     max-width: 800px;
@@ -18,37 +18,37 @@ section {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-section h2 {
+.page_main h2 {
     font-size: 18px;
     font-weight: normal;
 }
 
-section h2::before {
+.page_main h2::before {
     margin-right: 0.5ch;
     content: '&';
     font-weight: bold;
     color: var(--c-main-l);
 }
 
-section li::marker {
+.page_main li::marker {
     content: none;
 }
 
-section ul ul {
+.page_main ul ul {
     padding: 1ch;
     border-left: 2px solid var(--c-main-l);
 }
 
-section li:not(:first-child) {
+.page_main li:not(:first-child) {
     margin-top: 1ch;
 }
 
-section .page-path {
+.page_main .page-path {
     font-size: 0.75em;
     padding: 0 0.5ch;
     color: var(--c-main-f);
 }
 
-section .page-description {
+.page_main .page-description {
     font-size: 0.9em;
 }

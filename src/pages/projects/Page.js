@@ -4,7 +4,7 @@ import './Styles.css';
 
 function Page() {
 
-    return <div id='projects'>
+    return <main className='page_projects'>
         {Object.keys(PROJECTS).map(project => (
             <AZLink key={project} href={project} className='project-link-panel' is_panel={true}>
                 <span className='project-path'>AZsSPC{project}</span>
@@ -14,7 +14,7 @@ function Page() {
                 <div className='project-marks'></div>
             </AZLink>
         ))}
-    </div>;
+    </main>;
 }
 
 export default Page;
