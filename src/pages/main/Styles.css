@@ -29,3 +29,26 @@ section h2::before {
     font-weight: bold;
     color: var(--c-main-l);
 }
+
+section li::marker {
+    content: none;
+}
+
+section ul ul {
+    padding: 1ch;
+    border-left: 2px solid var(--c-main-l);
+}
+
+section li:not(:first-child) {
+    margin-top: 1ch;
+}
+
+section .page-path {
+    font-size: 0.75em;
+    padding: 0 0.5ch;
+    color: var(--c-main-f);
+}
+
+section .page-description {
+    font-size: 0.9em;
+}

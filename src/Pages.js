@@ -1,50 +1,56 @@
-const PAGES = {
-  '/': {
-    load: () => import('./pages/main/Page.js'),
-    title: 'Main page',
-    color: 'red'
-  },
-  
-  '/contacts/': {
-    load: () => import('./pages/contacts/Page.js'),
-    title: 'Contacts',
-    color: 'green'
-  },
-
-  '/about/': {
-    load: () => import('./pages/about/Page.js'),
-    title: 'About',
-    color: 'blue'
-  },
-
-  '/projects/': {
-    load: () => import('./pages/projects/Page.js'),
-    title: 'Projects',
-    color: 'magenta'
-  }
-}
-
 const PROJECTS = {
   '/layout_translator/': {
     load: () => import('./pages/projects/layout_translator/Page.js'),
     title: 'Layout Translator',
-    description: 'Insert mistyped russian or ukrainian text and receive the right version',
+    description: 'Corrects mistyped Russian or Ukrainian text caused by keyboard layout mismatch',
     tags: ['web', 'for all', 'translator', 'utility']
   },
 
   '/evo/': {
     load: () => import('./pages/projects/evo/Page.js'),
     title: 'Evo',
-    description: 'An evolutionary simulation of cells',
+    description: 'A cellular evolution simulation running on a 2D grid environment',
     tags: ['web', 'for all', 'simulation', 'evolution']
   },
 
   '/evo2/': {
     load: () => import('./pages/projects/evo_pro/Page.js'),
     title: 'Evo 2.0',
-    description: 'An advanced evolutionary simulation of cells',
+    description: 'An advanced evolutionary simulation featuring processor-driven cells in a hex world',
     tags: ['WIP', 'web', 'for all', 'simulation', 'evolution']
   }
+}
+
+const PAGES = {
+  '/': {
+    load: () => import('./pages/main/Page.js'),
+    title: 'Main page',
+    description: 'Overview of the site, including navigation, guides, and essential information',
+    color: 'red'
+  },
+
+  '/contacts/': {
+    load: () => import('./pages/contacts/Page.js'),
+    title: 'Contacts',
+    description: 'Available communication channels and preferred ways to reach the developer',
+    color: 'gold'
+  },
+
+  '/about/': {
+    load: () => import('./pages/about/Page.js'),
+    title: 'About',
+    description: 'Background information about the developer and the purpose of this site',
+    color: 'blue'
+  },
+
+  '/projects/': {
+    load: () => import('./pages/projects/Page.js'),
+    title: 'Projects',
+    description: 'Collection of experimental tools, simulations, and programming projects',
+    color: 'magenta',
+    child: PROJECTS
+  },
+
 }
 
 const ALL_PAGES = { ...PAGES, ...PROJECTS }

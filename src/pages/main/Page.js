@@ -8,6 +8,24 @@ import { PAGES } from '../../Pages.js';
 function Page() {
     const pathname = 'https://github.com/azsspc/azsspc.github.io/blob/main' + window.location.pathname;
 
+    function recursiveRender(dictionary, level = 0) {
+
+
+        return (<ul>{Object.keys(dictionary).map(page => (
+            <li key={page} >
+                <div>
+                    <AZLink color={dictionary[page].color} href={page}>{dictionary[page].title}</AZLink>
+
+                    <span className='page-path'>{page}</span>
+                </div>
+                <span className='page-description'>{dictionary[page].description}</span>
+
+                {dictionary[page]?.child && recursiveRender(dictionary[page].child, level + 1)}
+            </li>
+        ))
+        }</ul>);
+    }
+
     return <>
         <section>
             <h2>Welcome to AZsSPC's site!</h2>
@@ -97,13 +115,7 @@ function Page() {
 
         <section id='pages'>
             <h2>Pages list</h2>
-            {Object.keys(PAGES).map(page => (
-                <p key={page}>
-                    {PAGES[page].title}{' '}
-                    <AZLink color={PAGES[page].color} href={page}>AZsSPC{page}</AZLink><br />
-                    {PAGES[page].description}
-                </p>
-            ))}
+            {recursiveRender(PAGES)}
         </section>
     </>;
 }
