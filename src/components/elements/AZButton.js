@@ -1,7 +1,8 @@
 function AZButton({ children, color, className = '', pure = false, ...props }) {
     return (
         <button
-            className={`az-button ${className} ${color ? `color-${color}` : ''} ${pure ? 'pure' : ''}`}
+            className={`az-button ${className} ${pure ? 'pure' : ''}`}
+            color={color || 'unset'}
             {...props}
         >
             {children}

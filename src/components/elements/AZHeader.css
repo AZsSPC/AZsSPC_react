@@ -19,9 +19,9 @@ header {
     gap: 1ch;
     align-items: center;
     justify-content: center;
-    background: var(--c-header);
+    background: var(--color-header);
     box-shadow: var(--shadow);
-    border-bottom: solid 2px var(--c-main-l);
+    border-bottom: solid 2px var(--color-main-light);
 }
 
 header>div {

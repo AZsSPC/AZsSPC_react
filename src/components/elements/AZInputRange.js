@@ -3,7 +3,7 @@ import React, { forwardRef } from 'react';
 const AZInputRange = forwardRef(function AZInputRange(props, ref) {
   const { label, min = 0, max = 100, step = 1, defaultValue = 0, onChange, color, ...rest } = props;
   return (
-    <label className={`az-input-button ${color ? `color-${color}` : ''}`}>
+    <label className={`az-input-button`} color={color || 'unset'} >
       {label && `${label} `}
       <input
         ref={ref}

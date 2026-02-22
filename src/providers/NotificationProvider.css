@@ -17,10 +17,10 @@
     display: flex;
     flex-direction: column;
     gap: 1em;
-    background: var(--c-gray-d);
+    background: var(--color-gray-d);
     padding: 0.75em;
     border-radius: 1em;
-    border: solid 2px var(--c-gray-l);
+    border: solid 2px var(--color-gray-l);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     color: white;
     width: auto;
@@ -28,21 +28,21 @@
 
 
 .az-notification.az-notification-success {
-    border-color: var(--c-green-l);
-    background: var(--c-green-d);
+    border-color: var(--color-green-l);
+    background: var(--color-green-d);
 }
 
 .az-notification.az-notification-error {
-    border-color: var(--c-red-l);
-    background: var(--c-red-d);
+    border-color: var(--color-red-l);
+    background: var(--color-red-d);
 }
 
 .az-notification.az-notification-warning {
-    border-color: var(--c-gold-l);
-    background: var(--c-gold-d);
+    border-color: var(--color-gold-l);
+    background: var(--color-gold-d);
 }
 
 .az-notification.az-notification-info {
-    border-color: var(--c-blue-l);
-    background: var(--c-blue-d);
+    border-color: var(--color-blue-l);
+    background: var(--color-blue-d);
 }

@@ -1,7 +1,7 @@
 #text-input,
 #text-output {
     border-radius: 1em;
-    background: var(--c-back-head);
+    background: var(--color-back-head);
     padding: .7rem;
     width: calc(100vw - 2rem);
     max-width: 800px;
@@ -13,11 +13,11 @@
 }
 
 #text-output {
-    border: 2px solid var(--c-blue);
+    border: 2px solid var(--color-blue);
 }
 
 #text-input {
-    border: 2px solid var(--c-magenta);
+    border: 2px solid var(--color-magenta);
 }
 
 .translator-page {

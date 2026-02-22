@@ -32,7 +32,8 @@ function AZLink({ children, href, className = '', color, target, pure = false, i
 
     return (
         <a
-            className={`${is_panel ? 'az-link-panel' : 'az-link-button'} ${className} ${color ? `color-${color}` : ''} ${pure ? 'pure' : ''}`}
+            className={`${is_panel ? 'az-link-panel' : 'az-link-button'} ${className} ${pure ? 'pure' : ''}`}
+            color={color || 'unset'}
             href={href}
             target={isExternal ? '_blank' : target}
             rel={isExternal ? 'noreferrer' : undefined}

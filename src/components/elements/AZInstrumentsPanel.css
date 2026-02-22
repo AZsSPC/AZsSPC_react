@@ -7,9 +7,9 @@
     gap: 1ch;
     align-items: center;
     justify-content: center;
-    background: var(--c-main);
+    background: var(--color-main);
     box-shadow: var(--shadow);
-    border-top: solid 2px var(--c-main-l);
+    border-top: solid 2px var(--color-main-light);
     position: absolute;
     bottom: 0;
     left: 0;

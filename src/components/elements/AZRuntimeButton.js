@@ -12,7 +12,7 @@ export default function AZRuntimeButton({ name = 'Runtime', ...props }) {
   };
 
   return (
-    <button className={`az-button az-button-run ${running ? 'color-red' : 'color-blue'}`} onClick={handleClick}  {...props}>
+    <button className={`az-button az-button-run`} color={running ? 'red' : 'blue'} onClick={handleClick}  {...props}>
       {running ? '||' : '|>'}
     </button>
   );

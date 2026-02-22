@@ -2,11 +2,8 @@
 .az-link-button,
 .az-input-button,
 .az-select-button {
-    --az-button-background: var(--c-green);
-    --az-button-hover: var(--c-green-d);
-    --az-button-foreground: var(--c-white-text);
-    background: var(--az-button-background);
-    color: var(--az-button-foreground);
+    background: var(--color-element);
+    color: var(--color-text-white);
     border-radius: 0.5ch;
     border: none;
     padding: 0 0.5ch;
@@ -25,7 +22,6 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-
 }
 
 /* #region .az-select-button specifics */
@@ -40,13 +36,13 @@
 
 .az-select-button .az-select-button-selected {
     padding: 0 0.5ch;
-    background-color: var(--az-button-hover);
-    color: var(--az-button-foreground);
+    background-color: var(--color-element-dark);
+    color: var(--color-element-white);
     max-width: 10em;
 }
 
 .az-select-button .az-select-dropdown {
-    color: var(--az-button-foreground);
+    color: var(--color-element-white);
     position: absolute;
     left: 0;
     right: 0;
@@ -58,20 +54,20 @@
     gap: 2px;
     overflow-y: auto;
     overflow-x: hidden;
-    border: 2px solid var(--az-button-background);
-    background-color: var(--az-button-background);
+    border: 2px solid var(--color-element);
+    background-color: var(--color-element);
     box-shadow: var(--shadow);
 }
 
 
 .az-select-button .az-select-dropdown li {
     padding: 0.25ch 0.5ch;
-    background-color: var(--az-button-hover);
+    background-color: var(--color-element-dark);
 }
 
 .az-select-button .az-select-dropdown li:hover {
-    background-color: var(--az-button-foreground);
-    color: var(--az-button-hover);
+    background-color: var(--color-element-white);
+    color: var(--color-element-dark);
 }
 
 .az-select-button .az-select-dropdown::-webkit-scrollbar {
@@ -80,12 +76,12 @@
 }
 
 .az-select-button .az-select-dropdown::-webkit-scrollbar-thumb {
-    background-color: var(--az-button-foreground);
-    border: 2px solid var(--az-button-hover);
+    background-color: var(--color-element-white);
+    border: 2px solid var(--color-element-dark);
 }
 
 .az-select-button .az-select-dropdown::-webkit-scrollbar-track {
-    background-color: var(--az-button-hover);
+    background-color: var(--color-element-dark);
 }
 
 /* #endregion */
@@ -118,8 +114,8 @@
 /* #region .az-input-button specifics */
 
 .az-input-button input {
-    background: var(--az-button-hover);
-    color: var(--az-button-foreground);
+    background: var(--color-element-dark);
+    color: var(--color-element-white);
     border: none;
     line-height: 1em;
 }
@@ -154,36 +150,36 @@
     -webkit-appearance: none;
     appearance: none;
     width: 8rem;
-    background-color: var(--az-button-hover);
+    background-color: var(--color-element-dark);
     cursor: ew-resize;
     height: 0.5ch;
 }
 
 .az-input-button:hover input[type=range] {
-    background-color: var(--az-button-background);
+    background-color: var(--color-element);
 }
 
 .az-input-button input[type=range]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    background: var(--az-button-foreground);
+    background: var(--color-element-white);
     width: 0.5ch;
     height: 1em;
 }
 
 .az-input-button:hover input[type=range]::-webkit-slider-thumb {
-    background-color: var(--az-button-hover);
+    background-color: var(--color-element-dark);
 }
 
 
 .az-input-button input[type=range]::-moz-range-thumb {
-    background: var(--az-button-foreground);
+    background: var(--color-element-white);
     width: 0.5ch;
     height: 1em;
 }
 
 .az-input-button:hover input[type=range]::-moz-range-thumb {
-    background-color: var(--az-button-hover);
+    background-color: var(--color-element-dark);
 }
 
 
@@ -206,108 +202,17 @@
 
 /* #endregion */
 
-/* #region coloring */
-
 :is(.az-button, .az-link-button, .az-input-button, .az-select-button):not([static]):hover {
-    background: var(--az-button-foreground);
-    color: var(--az-button-hover);
+    background: var(--color-element-white);
+    color: var(--color-element-dark);
 }
 
-:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-green {
-    --az-button-background: var(--c-green);
-    --az-button-hover: var(--c-green-d);
+.az-span {
+    color: var(--color-element-light);
 }
 
-:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-magenta {
-    --az-button-background: var(--c-magenta);
-    --az-button-hover: var(--c-magenta-d);
-}
-
-:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-purple {
-    --az-button-background: var(--c-purple);
-    --az-button-hover: var(--c-purple-d);
-}
-
-:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-blue {
-    --az-button-background: var(--c-blue);
-    --az-button-hover: var(--c-blue-d);
-}
-
-:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-gold {
-    --az-button-background: var(--c-gold);
-    --az-button-hover: var(--c-gold-d);
-}
-
-:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-red {
-    --az-button-background: var(--c-red);
-    --az-button-hover: var(--c-red-d);
-}
-
-:is(.az-button, .az-link-button, .az-input-button, .az-select-button).color-gray {
-    --az-button-background: var(--c-gray);
-    --az-button-hover: var(--c-gray-d);
-}
-
-
-.az-span.color-green {
-    color: var(--c-green-l);
-}
-
-.az-span.color-magenta {
-    color: var(--c-magenta-l);
-}
-
-.az-span.color-purple {
-    color: var(--c-purple-l);
-}
-
-.az-span.color-blue {
-    color: var(--c-blue-l);
-}
-
-.az-span.color-gold {
-    color: var(--c-gold-l);
-}
-
-.az-span.color-red {
-    color: var(--c-red-l);
-}
-
-.az-span.color-gray {
-    color: var(--c-gray-l);
-}
 
 .az-select-button option {
-    background: var(--c-green-d);
+    background: var(--color-element-dark);
     font-size: 0.8em;
 }
-
-.az-select-button.color-green option {
-    background: var(--c-green-d);
-}
-
-.az-select-button.color-magenta option {
-    background: var(--c-magenta-d);
-}
-
-.az-select-button.color-purple option {
-    background: var(--c-purple-d);
-}
-
-.az-select-button.color-blue option {
-    background: var(--c-blue-d);
-}
-
-.az-select-button.color-gold option {
-    background: var(--c-gold-d);
-}
-
-.az-select-button.color-red option {
-    background: var(--c-red-d);
-}
-
-.az-select-button.color-gray option {
-    background: var(--c-gray-d);
-}
-
-/*#endregion*/

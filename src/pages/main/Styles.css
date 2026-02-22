@@ -11,10 +11,10 @@
     max-width: 800px;
     width: 100%;
     gap: 1ch;
-    background: var(--c-main);
+    background: var(--color-main);
     padding: 1ch 1.5ch;
     border-radius: 1ch;
-    border: solid 2px var(--c-main-l);
+    border: solid 2px var(--color-main-light);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -27,7 +27,7 @@
     margin-right: 0.5ch;
     content: '&';
     font-weight: bold;
-    color: var(--c-main-l);
+    color: var(--color-main-light);
 }
 
 .page_main li::marker {
@@ -36,7 +36,7 @@
 
 .page_main ul ul {
     padding: 1ch;
-    border-left: 2px solid var(--c-main-l);
+    border-left: 2px solid var(--color-main-light);
 }
 
 .page_main li:not(:first-child) {
@@ -46,7 +46,7 @@
 .page_main .page-path {
     font-size: 0.75em;
     padding: 0 0.5ch;
-    color: var(--c-main-f);
+    color: rgb(from var(--color-main-white) r g b / 50%);
 }
 
 .page_main .page-description {

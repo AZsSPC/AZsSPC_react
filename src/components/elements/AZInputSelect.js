@@ -82,7 +82,8 @@ const AZInputSelect = forwardRef(function AZInputSelect(props, ref) {
 
   return (<div
     ref={setRef}
-    className={`az-select-button ${color ? `color-${color}` : ''}`}
+    className={'az-select-button'}
+    color={color || 'unset'}
     style={style}
     tabIndex={0}
     role="combobox"

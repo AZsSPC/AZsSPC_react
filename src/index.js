@@ -6,6 +6,7 @@ import { NotificationProvider } from 'providers/NotificationProvider'
 import AZHeader from 'components/elements/AZHeader'
 import Page404 from 'pages/_404/Page.js'
 
+import './Colors.css'
 import './Styles.css'
 import './AZBasicElements.css'
 
