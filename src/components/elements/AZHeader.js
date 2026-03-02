@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import AZLink from './AZLink';
 import AZButton from '../../components/elements/AZButton'
 import AZButtonCopy from '../../components/elements/AZButtonCopy'
@@ -5,22 +6,45 @@ import { useNotify } from "../../providers/NotificationProvider";
 import { ALL_PAGES } from '../../Pages.js';
 import './AZHeader.css';
 
-
 function AZHeader() {
-    const pathname = 'https://github.com/AZsSPC/AZsSPC_react/blob/main/src/pages/' + ALL_PAGES[window.location.pathname]?.path + '/';
+    const [location, setLocation] = useState({
+        pathname: window.location.pathname,
+        href: window.location.href
+    });
+
     const notify = useNotify();
-    console.log('head')
+
+    useEffect(() => {
+        const update = () => setLocation({
+            pathname: window.location.pathname,
+            href: window.location.href
+        });
+
+        window.addEventListener('popstate', update);
+        window.addEventListener('hashchange', update);
+
+        return () => {
+            window.removeEventListener('popstate', update);
+            window.removeEventListener('hashchange', update);
+        };
+    }, []);
+
+
+    const page = ALL_PAGES[location.pathname];
+    const githubPath = page ? `https://github.com/AZsSPC/AZsSPC_react/blob/main/src/pages/${page.path}/` : null;
 
     return (
         <div className='az-header-container'>
             <header className='az-header'>
-                <AZLink color='red' href='/' pure={true}>main</AZLink>
-                <AZLink color='green' href='/#pages' pure={true}>pages</AZLink>
-                <AZLink color='blue' href={pathname} pure={true}>code</AZLink>
-                <AZButton color='gold' onClick={(e) => {
-                    notify('Unavailable yet', { type: 'info' });
-                }}>info</AZButton>
-                <AZButtonCopy color='gray' copy={window.location.href} pure={true}>AZsSPC{window.location.pathname}</AZButtonCopy>
+                <AZLink color='red' href='/' pure>main</AZLink>
+
+                <AZLink color='green' href='/#pages' pure>pages</AZLink>
+
+                {githubPath && (<AZLink color='blue' href={githubPath} pure>code</AZLink>)}
+
+                <AZButton color='gold' onClick={() => notify('Unavailable yet', { type: 'info' })}>info</AZButton>
+
+                <AZButtonCopy color='gray' copy={location.href} pure>AZsSPC{location.pathname}</AZButtonCopy>
             </header>
         </div>
     );
