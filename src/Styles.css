@@ -32,6 +32,7 @@ body::-webkit-scrollbar-track {
 body {
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
   background-color: var(--color-main-black);
   height: 100dvh;
   width: 100dvw;
