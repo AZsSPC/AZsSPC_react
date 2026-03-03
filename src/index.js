@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 
 import { NotificationProvider } from 'providers/NotificationProvider'
 import AZHeader from 'components/elements/AZHeader'
+import AZSidePanel from 'components/elements/AZSidePanel'
 import Page404 from 'pages/_404/Page.js'
 
 import './Colors.css'
@@ -104,7 +105,7 @@ const App = () => {
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-console.log('index');
+
 root.render(
   <React.StrictMode>
     <NotificationProvider>

@@ -1,123 +1,77 @@
 import './Styles.css';
-import AZButton from '../../components/elements/AZButton'
-import AZButtonCopy from '../../components/elements/AZButtonCopy'
 import AZLink from '../../components/elements/AZLink';
 import AZSpan from '../../components/elements/AZSpan';
-import { PAGES } from '../../Pages.js';
 
 function Page() {
-    const pathname = 'https://github.com/azsspc/azsspc.github.io/blob/main' + window.location.pathname;
+    return (<main className='page_main'>
 
-    function recursiveRender(dictionary, level = 0) {
+        <div className='landing'>
 
-
-        return (<ul>{Object.keys(dictionary).map(page => (
-            <li key={page} >
-                <div>
-                    <AZLink color={dictionary[page].color} href={page}>{dictionary[page].title}</AZLink>
-
-                    <span className='page-path'>{page}</span>
+            <div className='landing_identity'>
+                <h1>AZsSPC</h1>
+                <div className='landing_caption'>
+                    <p>
+                        <AZSpan color="blue">Independent software laboratory</AZSpan>
+                    </p>
+                    <p>
+                        Ideas are implemented, tested, refactored, and published in motion
+                    </p>
+                    <p>
+                        <AZSpan color="gold">Feel free to explore!</AZSpan>
+                    </p>
                 </div>
-                <span className='page-description'>{dictionary[page].description}</span>
+            </div>
 
-                {dictionary[page]?.child && recursiveRender(dictionary[page].child, level + 1)}
-            </li>
-        ))
-        }</ul>);
-    }
+            <div className='landing_directions'>
+                <div className='direction_grid'>
+                    <div className='direction'>
+                        <h3>
+                            <AZLink href='/projects/?q=(tool)' color='blue'>Tools</AZLink>
+                        </h3>
+                        <p>
+                            Interactive utilities and web-based systems
+                            designed to solve specific technical problems
+                        </p>
+                    </div>
+                    <div className='direction'>
+                        <h3>
+                            <AZLink href='/projects/?q=(simulation)' color='magenta'>Simulations</AZLink>
+                        </h3>
+                        <p>
+                            System modeling, mechanics experiments
+                            and rule-driven environments
+                        </p>
+                    </div>
+                    <div className='direction'>
+                        <h3>
+                            <AZLink href='/projects/?q=(experimen)' color='purple'>Experiments</AZLink>
+                        </h3>
+                        <p>
+                            Architectural trials, rendering ideas
+                            and unconventional implementation patterns
+                        </p>
+                    </div>
+                    <div className='direction'>
+                        <h3>
+                            <AZLink href='/projects/?q=(game)' color='green'>Games</AZLink>
+                        </h3>
+                        <p>
+                            Interactive utilities and web-based systems
+                            designed to solve specific technical problems
+                        </p>
+                    </div>
+                </div>
+            </div>
 
-    return <main className='page_main'>
-        <section>
-            <h2>Welcome to AZsSPC's site!</h2>
-            <p>
-                This is my personal site, where I will post some of my{' '}
-                <AZLink color="magenta" href="/projects/">projects</AZLink>{' '}
-                related to <AZSpan color="blue">programming</AZSpan>,{' '}
-                <AZSpan color="purple">gaming</AZSpan>{' '}
-                and other stuff I'd like to share
-            </p>
-            <p>
-                If you have any questions or suggestions, please feel free to contact me through{' '}
-                <AZLink color="gold" href="/contacts/">contacts page</AZLink>
-            </p>
-            <p>
-                I hope you will find something interesting here!{' '}
-                <AZSpan color="gold">Enjoy your stay!</AZSpan>
-            </p>
-        </section>
+            <div className='landing_links'>
+                <AZLink href='/projects/' color='green'>Projects</AZLink>
+                <AZLink href='/about/' color='blue'>About</AZLink>
+                <AZLink href='/contacts/' color='gold'>Contacts</AZLink>
+            </div>
 
-        <section>
-            <h2>Important information</h2>
-            <p>
-                The purpose of this page is to tell you some{' '}
-                <AZSpan color="gold">meanings and useful information</AZSpan>{' '}
-                for using the site, so plase, make sure you read this page carefully
-            </p>
-            <p>
-                Also I must say that the site is <AZSpan color="blue">still in development</AZSpan>,
-                so some of the features{' '}
-                <AZSpan color="magenta">may not work properly</AZSpan>,
-                but I will try to fix it as soon as possible
-            </p>
-        </section>
+        </div>
 
-        <section>
-            <h2>Elements explanation</h2>
-            <p>
-                Basic elements look like this:{' '}
-                <AZLink color="purple" href='#' >anchor</AZLink>{' '} to specific element on the current page,{' '}
-                <AZLink color="red" href='/'>internal link</AZLink>,{' '}
-                <AZLink color="blue" href='http://google.com/' >external link</AZLink>,{' '}
-                <AZButton color="green">button</AZButton>{' '}
-                and{' '}
-                <AZButtonCopy color='gray'>copy button</AZButtonCopy>
-
-            </p>
-            <p>
-                They can be colored differently to satisfy various design needs,
-                look at the helping icons before or after element content to specify it's purpose
-            </p>
-        </section>
-
-        <section>
-            <h2>Header content explanation</h2>
-            <p>
-                <AZLink color='red' href='/' pure={true}>main</AZLink>{' '}
-                is the link to the{' '}
-                <AZLink color='red' href='/'>main page</AZLink>{' '}
-                of the site
-            </p>
-            <p>
-                <AZLink color='green' href='#pages' pure={true}>pages</AZLink>{' '}
-                is the link to the {' '}
-                <AZLink color='green' href='#pages'>list of all pages</AZLink>{' '}
-                of the site
-            </p>
-            <p>
-                <AZLink color='blue' href={pathname} pure={true}>code</AZLink>{' '}
-                is the link to the{' '}
-                <AZLink color='blue' href={pathname} >source code</AZLink>{' '}
-                of current page on{' '}
-                <AZLink color="gray" href="https://github.com/AZsSPC" >GitHub</AZLink>{' '}
-            </p>
-            <p>
-                <AZButton color='gold'>info</AZButton>{' '}
-                is the button to show the {' '}
-                <AZSpan color='gold'>information</AZSpan>{' '}
-                about the current page
-            </p>
-            <p>
-                Clicking on{' '}
-                <AZButtonCopy color='gray'>AZsSPC/current/page/path/</AZButtonCopy>{' '}
-                will copy it to the clipboard
-            </p>
-        </section>
-
-        <section id='pages'>
-            <h2>Pages list</h2>
-            {recursiveRender(PAGES)}
-        </section>
-    </main>;
+    </main>);
 }
 
 export default Page;

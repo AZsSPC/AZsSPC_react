@@ -1,6 +1,6 @@
 .page_about {
     align-items: center;
-    gap: 1ch;
+    gap: 1.5ch;
     padding-bottom: 40dvh;
     padding: 1ch 1ch 40dvh 1ch;
 }
@@ -10,22 +10,50 @@
     flex-direction: column;
     max-width: 800px;
     width: 100%;
-    gap: 1ch;
     background: var(--color-main);
-    padding: 1ch 1.5ch;
-    border-radius: 1ch;
+    border-radius: 2ch;
     border: solid 2px var(--color-main-light);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: .25ch 1ch .5ch 1ch;
+}
+
+.page_about p {
+    padding: 1ch .5ch .5ch .5ch;
 }
 
 .page_about h2 {
-    font-size: 18px;
+    font-size: 2ch;
     font-weight: normal;
+    padding: .5ch .25ch;
+    border-bottom: solid 2px var(--color-main-light);
 }
 
 .page_about h2::before {
     margin-right: 0.5ch;
-    content: '&';
+    content: '#';
     font-weight: bold;
     color: var(--color-main-light);
+}
+
+.page_about li::marker {
+    content: none;
+}
+
+.page_about ul ul {
+    padding: 1ch;
+    border-left: 2px solid var(--color-main-light);
+}
+
+.page_about li:not(:first-child) {
+    margin-top: 1ch;
+}
+
+.page_about .page-path {
+    font-size: 0.75em;
+    padding: 0 0.5ch;
+    color: rgb(from var(--color-main-white) r g b / 50%);
+}
+
+.page_about .page-description {
+    font-size: 0.9em;
 }
